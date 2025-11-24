@@ -2,6 +2,14 @@ $(document).ready(function() {
   const username = 'SentientSamuel';
   const apiUrl = `https://api.github.com/users/${username}/repos`;
 
+  // Manual descriptions for repositories that don't have one on GitHub.
+  // Add your repository names and descriptions here.
+  const manualDescriptions = {
+    "Website": "The source code for this personal portfolio website.",
+    "Ethernet-Tester": "Code for an ethernet testing device.",
+    // "RepoName": "Your manual description here",
+  };
+
   // Fetch repositories
   $.getJSON(apiUrl, function(repos) {
     const $indicators = $('.carousel-indicators');
@@ -20,7 +28,9 @@ $(document).ready(function() {
 
       // Create Carousel Item
       const itemClass = index === 0 ? 'carousel-item active' : 'carousel-item';
-      const description = repo.description ? repo.description : 'No description available.';
+      
+      // Determine description: GitHub > Manual > Default
+      const description = repo.description || manualDescriptions[repo.name] || 'No description available.';
       
       const itemHtml = `
         <div class="${itemClass}">
@@ -30,7 +40,7 @@ $(document).ready(function() {
               <p class="card-text">${description}</p>
               <div class="mt-3">
                 <button class="btn btn-primary expand-btn" data-repo="${repo.name}" data-toggle="modal" data-target="#projectModal">
-                  Expand
+                  ReadMe
                 </button>
                 <a href="${repo.html_url}" target="_blank" class="btn btn-outline-primary ml-2">View on GitHub</a>
               </div>
@@ -66,4 +76,3 @@ $(document).ready(function() {
     $('.carousel-inner').html('<div class="alert alert-warning text-center">Failed to load projects from GitHub.</div>');
   });
 });
-

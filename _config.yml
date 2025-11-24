@@ -1,0 +1,15 @@
+title: Samuel Lamb
+email: samueltlamb1997@gmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Computer Engineering Graduate Portfolio and Blog
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://samuellamb.dev" # the base hostname & protocol for your site
+twitter_username: jekyllrb
+github_username:  SentientSamuel
+
+# Build settings
+markdown: kramdown
+theme: jekyll-theme-minimal
+plugins:
+  - jekyll-feed
+

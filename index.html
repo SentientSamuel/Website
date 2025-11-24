@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,6 +49,9 @@
 
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#projects">Current Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#blog">Dev Blog</a>
           </li>
           <!-- <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#portfolio">Pictures(WIP)</a>
@@ -135,7 +141,7 @@
         <div class="col-lg-8 text-center" id="projects">
           <h2 class="text-center mt-0">Current Projects</h2>
           <hr class="divider dark my-4">
-
+          
           <!-- Reusable Modal for Project Details -->
           <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -179,6 +185,31 @@
     </div>
   </section>
 
+  <!-- Dev Blog Section -->
+  <section class="page-section" id="blog">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="text-center mt-0">Dev Blog</h2>
+          <hr class="divider dark my-4">
+          <div class="list-group text-left">
+            {% for post in site.posts limit:3 %}
+              <a href="{{ post.url | relative_url }}" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1">{{ post.title }}</h5>
+                  <small>{{ post.date | date: "%b %-d, %Y" }}</small>
+                </div>
+                <p class="mb-1">{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
+              </a>
+            {% endfor %}
+          </div>
+          <div class="text-center mt-4">
+            <a href="devblog/" class="btn btn-primary">View All Posts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
     <!-- Portfolio Section
     <section id="portfolio">

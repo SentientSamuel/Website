@@ -45,7 +45,7 @@ Consolidated all contact methods into a single, clean section titled "Connect Wi
 - Improved responsive design for mobile devices
 - Added custom CSS and JavaScript files for better code organization
 
-All changes are live on the site now. The dark mode is my favorite addition - it's great for late-night portfolio browsing!
+All changes are live on the site now.
 
 ### Technical Stack
 

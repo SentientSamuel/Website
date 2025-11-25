@@ -70,12 +70,34 @@ body {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
+/* Light mode navbar - dark text on light background */
 .navbar-light .navbar-nav .nav-link {
-  color: var(--text-color);
+  color: rgba(0, 0, 0, 0.85) !important;
+  font-weight: 500;
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
-  color: #f4623a;
+  color: #f4623a !important;
+}
+
+/* Dark mode navbar - light text on dark background */
+body.dark-mode .navbar-light .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.dark-mode .navbar-light .navbar-nav .nav-link:hover {
+  color: #ff8c42 !important;
+}
+
+/* Navbar at top of page (transparent background) */
+#mainNav:not(.navbar-scrolled) {
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode #mainNav:not(.navbar-scrolled) {
+  background-color: rgba(26, 26, 26, 0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 footer.bg-light {
@@ -85,8 +107,8 @@ footer.bg-light {
 /* Dark Mode Toggle Button */
 #darkModeToggle {
   background: none;
-  border: 2px solid var(--text-color);
-  color: var(--text-color);
+  border: 2px solid rgba(0, 0, 0, 0.7);
+  color: rgba(0, 0, 0, 0.85);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -103,6 +125,17 @@ footer.bg-light {
   border-color: #f4623a;
   color: #fff;
   transform: rotate(180deg);
+}
+
+body.dark-mode #darkModeToggle {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+body.dark-mode #darkModeToggle:hover {
+  background-color: #ff8c42;
+  border-color: #ff8c42;
+  color: #fff;
 }
 
 /* Skills Section Styles */

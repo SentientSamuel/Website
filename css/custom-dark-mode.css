@@ -1,0 +1,209 @@
+/* Dark Mode Styles */
+:root {
+  --bg-color: #fff;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --section-bg-light: #f8f9fa;
+  --section-bg-dark: #fff;
+  --navbar-bg: rgba(255, 255, 255, 0.95);
+  --navbar-scrolled-bg: #fff;
+  --card-bg: #fff;
+  --border-color: #dee2e6;
+  --skill-bar-bg: #e9ecef;
+  --transition-speed: 0.3s;
+}
+
+body.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --section-bg-light: #222;
+  --section-bg-dark: #2a2a2a;
+  --navbar-bg: rgba(26, 26, 26, 0.95);
+  --navbar-scrolled-bg: #1a1a1a;
+  --card-bg: #2a2a2a;
+  --border-color: #444;
+  --skill-bar-bg: #333;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.page-section.bg-light {
+  background-color: var(--section-bg-light) !important;
+  transition: background-color var(--transition-speed);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.card-body {
+  background-color: var(--card-bg);
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--border-color);
+}
+
+#mainNav {
+  background-color: var(--navbar-bg);
+  transition: background-color var(--transition-speed);
+}
+
+#mainNav.navbar-scrolled {
+  background-color: var(--navbar-scrolled-bg);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: var(--text-color);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #f4623a;
+}
+
+footer.bg-light {
+  background-color: var(--section-bg-light) !important;
+}
+
+/* Dark Mode Toggle Button */
+#darkModeToggle {
+  background: none;
+  border: 2px solid var(--text-color);
+  color: var(--text-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+#darkModeToggle:hover {
+  background-color: #f4623a;
+  border-color: #f4623a;
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+/* Skills Section Styles */
+.skill-item {
+  margin-bottom: 2rem;
+}
+
+.skill-name {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.skill-bar {
+  background-color: var(--skill-bar-bg);
+  border-radius: 10px;
+  height: 30px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skill-progress {
+  background: linear-gradient(90deg, #f4623a, #ff8c42);
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+  transition: width 1.5s ease-in-out;
+  width: 0;
+  box-shadow: 0 2px 4px rgba(244, 98, 58, 0.3);
+}
+
+.skill-progress.animate {
+  width: var(--skill-width);
+}
+
+/* Icon styles for skills section */
+.skill-icon {
+  font-size: 3rem;
+  color: #f4623a;
+  margin-bottom: 1rem;
+}
+
+body.dark-mode .skill-icon {
+  color: #ff8c42;
+}
+
+/* Social links in contact section */
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--section-bg-light);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+
+.contact-link:hover {
+  background-color: #f4623a;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(244, 98, 58, 0.3);
+}
+
+.contact-link i {
+  font-size: 1.5rem;
+}
+
+/* List group items in dark mode */
+body.dark-mode .list-group-item {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+body.dark-mode .list-group-item:hover {
+  background-color: #333;
+}
+
+body.dark-mode .list-group-item .text-primary {
+  color: #ff8c42 !important;
+}
+
+body.dark-mode .list-group-item .text-muted {
+  color: var(--text-muted) !important;
+}
+
+body.dark-mode .list-group-item .text-dark {
+  color: var(--text-color) !important;
+}
+

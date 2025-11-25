@@ -240,3 +240,33 @@ body.dark-mode .list-group-item .text-dark {
   color: var(--text-color) !important;
 }
 
+/* Blog content styling in dark mode */
+body.dark-mode .content {
+  color: var(--text-color);
+}
+
+body.dark-mode .content h1,
+body.dark-mode .content h2,
+body.dark-mode .content h3,
+body.dark-mode .content h4,
+body.dark-mode .content h5,
+body.dark-mode .content h6 {
+  color: var(--text-color);
+}
+
+body.dark-mode .content p,
+body.dark-mode .content li {
+  color: var(--text-color);
+}
+
+body.dark-mode .content a {
+  color: #ff8c42;
+}
+
+body.dark-mode .content code {
+  background-color: #333;
+  color: #ff8c42;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+

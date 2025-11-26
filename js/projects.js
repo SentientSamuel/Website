@@ -6,7 +6,7 @@ $(document).ready(function() {
   // Add your repository names and descriptions here.
   const manualDescriptions = {
     "Website": "The source code for this personal portfolio website.",
-    "Ethernet-Tester": "Code for an ethernet testing device.",
+    "Ethernet-Tester-Device": "Code for an ethernet testing device.",
     // "RepoName": "Your manual description here",
   };
 

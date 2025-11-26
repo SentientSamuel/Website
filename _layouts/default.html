@@ -21,6 +21,11 @@
 </head>
 
 <body id="page-top">
+  <script>
+    if (localStorage.getItem('darkMode') === 'enabled') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav" style="background-color: #fff; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);">

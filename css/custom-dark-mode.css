@@ -70,6 +70,25 @@ body {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
+/* Navbar Branding (Your Name) */
+.navbar-brand {
+    color: rgba(0, 0, 0, 0.7) !important; /* Default (Light Mode) */
+    transition: color 0.3s;
+}
+
+/* Hover state for light mode */
+.navbar-brand:hover {
+    color: #f4623a !important;
+}
+
+/* Dark Mode Branding */
+body.dark-mode .navbar-brand {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+body.dark-mode .navbar-brand:hover {
+    color: #ff8c42 !important;
+}
+
 /* Light mode navbar - dark text on light background */
 .navbar-light .navbar-nav .nav-link {
   color: rgba(0, 0, 0, 0.85) !important;

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "DIY Project: Bluetooth Vinyl Player"
-date: 2025-11-26 10:00:00 -0000
+date: 2025-11-26 00:00:00 -0000
 categories: project hardware
 ---
 

@@ -192,6 +192,115 @@
       border-left-color: #ff8c42;
     }
     
+    /* Multi-select and tag input styles */
+    .multi-select-container {
+      position: relative;
+    }
+    
+    .multi-select-dropdown {
+      position: relative;
+    }
+    
+    .multi-select-input {
+      min-height: 38px;
+      padding: 0.25rem 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: 0.25rem;
+      background-color: var(--card-bg);
+      cursor: text;
+    }
+    
+    .multi-select-input:focus-within {
+      border-color: #f4623a;
+      box-shadow: 0 0 0 0.2rem rgba(244, 98, 58, 0.25);
+      outline: none;
+    }
+    
+    body.dark-mode .multi-select-input:focus-within {
+      border-color: #ff8c42;
+      box-shadow: 0 0 0 0.2rem rgba(255, 140, 66, 0.25);
+    }
+    
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background-color: var(--section-bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+    
+    .tag-badge .tag-remove {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: bold;
+      padding-left: 0.25rem;
+    }
+    
+    .tag-badge .tag-remove:hover {
+      color: #dc3545;
+    }
+    
+    .tag-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      flex: 1;
+      min-width: 100px;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+    
+    .suggestions-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-top: none;
+      border-radius: 0 0 0.25rem 0.25rem;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    
+    .suggestions-dropdown.show {
+      display: block;
+    }
+    
+    .suggestion-item {
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    
+    .suggestion-item:hover {
+      background-color: var(--section-bg-light);
+    }
+    
+    .suggestion-item.selected {
+      background-color: rgba(244, 98, 58, 0.1);
+    }
+    
+    body.dark-mode .suggestion-item.selected {
+      background-color: rgba(255, 140, 66, 0.1);
+    }
+    
     .alert {
       border-radius: 0.25rem;
       padding: 0.75rem 1rem;
@@ -446,13 +555,14 @@
                   <th>Status</th>
                   <th>Qty (Avail / Total)</th>
                   <th>Location</th>
+                  <th>Currently Used In</th>
                   <th>Use Cases</th>
                   <th>AI Tags</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td colspan="8" class="loading-message">
+                  <td colspan="9" class="loading-message">
                     <i class="fas fa-spinner"></i>
                     <div>Loading inventory...</div>
                   </td>
@@ -559,13 +669,31 @@
               </div>
             </div>
             <div class="mb-3">
+              <label for="currentlyUsedIn">Currently Used In</label>
+              <div class="multi-select-container">
+                <div class="multi-select-dropdown">
+                  <div class="multi-select-input" id="currentlyUsedInInput" tabindex="0">
+                    <input type="text" class="tag-input" id="currentlyUsedInTagInput" placeholder="Type to add project/use...">
+                  </div>
+                </div>
+              </div>
+              <small class="form-text text-muted">Add multiple projects or uses this item is currently part of (e.g., "Home Automation", "Weather Station")</small>
+            </div>
+            <div class="mb-3">
               <label for="useCases">Use Cases</label>
               <textarea class="form-control" id="useCases" rows="2" placeholder="Describe what this item is used for..."></textarea>
             </div>
             <div class="mb-3">
               <label for="aiTags">AI Tags</label>
-              <input type="text" class="form-control" id="aiTags" placeholder="e.g., arduino, microcontroller, iot, sensors">
-              <small class="form-text text-muted">Comma-separated tags for AI search</small>
+              <div class="multi-select-container">
+                <div class="multi-select-dropdown">
+                  <div class="multi-select-input" id="aiTagsInput" tabindex="0">
+                    <input type="text" class="tag-input" id="aiTagsTagInput" placeholder="Type to add tags...">
+                  </div>
+                  <div class="suggestions-dropdown" id="aiTagsSuggestions"></div>
+                </div>
+              </div>
+              <small class="form-text text-muted">Select or type tags for AI search. Suggestions appear from existing inventory.</small>
             </div>
           </form>
         </div>
@@ -632,6 +760,217 @@
       return Array.from(values).sort();
     }
 
+    // Extract all AI tags from inventory (comma-separated, split them)
+    function getAllAITags() {
+      const tags = new Set();
+      inventoryData.forEach(item => {
+        const tagString = item['AI Tags'] || '';
+        if (tagString.trim() !== '') {
+          tagString.split(',').forEach(tag => {
+            const trimmed = tag.trim().toLowerCase();
+            if (trimmed) {
+              tags.add(trimmed);
+            }
+          });
+        }
+      });
+      return Array.from(tags).sort();
+    }
+
+    // Common AI tags that might be useful
+    const commonAITags = [
+      'microcontroller', 'arduino', 'esp32', 'esp8266', 'raspberry pi', 'iot',
+      'sensors', 'wifi', 'bluetooth', 'usb', 'development board', 'prototyping',
+      'electronics', 'automation', 'robotics', 'power supply', 'cable', 'connector',
+      'display', 'led', 'motor', 'servo', 'relay', 'transistor', 'resistor',
+      'capacitor', 'breadboard', 'jumper wires', 'shield', 'module', 'breakout',
+      'programming', 'debugging', 'testing', 'home automation', 'embedded'
+    ];
+
+    // Get all suggested AI tags (from inventory + common tags)
+    function getSuggestedAITags() {
+      const inventoryTags = getAllAITags();
+      const allTags = new Set([...commonAITags, ...inventoryTags]);
+      return Array.from(allTags).sort();
+    }
+
+    // Tag management for multi-select inputs
+    function createTagManager(containerId, inputId, suggestions = null) {
+      const container = document.getElementById(containerId);
+      const input = document.getElementById(inputId);
+      const tags = new Map(); // Map lowercase -> original case
+      let selectedSuggestionIndex = -1;
+
+      function addTag(tag) {
+        const trimmed = tag.trim();
+        if (!trimmed) return;
+        
+        const lowerTag = trimmed.toLowerCase();
+        if (tags.has(lowerTag)) return;
+        
+        tags.set(lowerTag, trimmed); // Store original case
+        renderTags();
+        input.value = '';
+        hideSuggestions();
+      }
+
+      function removeTag(tag) {
+        tags.delete(tag.toLowerCase());
+        renderTags();
+      }
+
+      function renderTags() {
+        const tagInput = container.querySelector('.tag-input');
+        const existingTags = container.querySelectorAll('.tag-badge');
+        existingTags.forEach(tag => tag.remove());
+
+        tags.forEach((originalTag, lowerTag) => {
+          const badge = document.createElement('span');
+          badge.className = 'tag-badge';
+          badge.innerHTML = `
+            <span>${escapeHtml(originalTag)}</span>
+            <span class="tag-remove" data-tag="${escapeHtml(lowerTag)}">×</span>
+          `;
+          badge.querySelector('.tag-remove').addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeTag(e.target.dataset.tag);
+          });
+          container.insertBefore(badge, tagInput);
+        });
+      }
+
+      function showSuggestions(filter = '') {
+        if (!suggestions) return;
+        
+        const suggestionsEl = document.getElementById('aiTagsSuggestions');
+        if (!suggestionsEl) return;
+
+        const filtered = suggestions.filter(s => 
+          s.toLowerCase().includes(filter.toLowerCase()) && 
+          !tags.has(s.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          suggestionsEl.classList.remove('show');
+          return;
+        }
+
+        suggestionsEl.innerHTML = filtered.slice(0, 10).map((s, idx) => 
+          `<div class="suggestion-item" data-value="${escapeHtml(s)}" data-index="${idx}">${escapeHtml(s)}</div>`
+        ).join('');
+
+        suggestionsEl.querySelectorAll('.suggestion-item').forEach((item, idx) => {
+          item.addEventListener('click', () => {
+            addTag(item.dataset.value);
+            selectedSuggestionIndex = -1;
+          });
+        });
+
+        suggestionsEl.classList.add('show');
+        selectedSuggestionIndex = -1;
+      }
+
+      function hideSuggestions() {
+        const suggestionsEl = document.getElementById('aiTagsSuggestions');
+        if (suggestionsEl) {
+          suggestionsEl.classList.remove('show');
+        }
+        selectedSuggestionIndex = -1;
+      }
+
+      function navigateSuggestions(direction) {
+        const suggestionsEl = document.getElementById('aiTagsSuggestions');
+        if (!suggestionsEl || !suggestionsEl.classList.contains('show')) return;
+
+        const items = suggestionsEl.querySelectorAll('.suggestion-item');
+        if (items.length === 0) return;
+
+        if (selectedSuggestionIndex >= 0) {
+          items[selectedSuggestionIndex].classList.remove('selected');
+        }
+
+        if (direction === 'down') {
+          selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, items.length - 1);
+        } else if (direction === 'up') {
+          selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, 0);
+        }
+
+        if (selectedSuggestionIndex >= 0) {
+          items[selectedSuggestionIndex].classList.add('selected');
+          items[selectedSuggestionIndex].scrollIntoView({ block: 'nearest' });
+        }
+      }
+
+      function selectCurrentSuggestion() {
+        if (selectedSuggestionIndex < 0) return;
+        const suggestionsEl = document.getElementById('aiTagsSuggestions');
+        if (!suggestionsEl) return;
+        const item = suggestionsEl.querySelector(`[data-index="${selectedSuggestionIndex}"]`);
+        if (item) {
+          addTag(item.dataset.value);
+        }
+      }
+
+      // Event handlers
+      input.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (value.includes(',')) {
+          const parts = value.split(',');
+          parts.slice(0, -1).forEach(part => addTag(part));
+          input.value = parts[parts.length - 1];
+        }
+        if (suggestions) {
+          showSuggestions(value);
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (selectedSuggestionIndex >= 0) {
+            selectCurrentSuggestion();
+          } else if (input.value.trim()) {
+            addTag(input.value);
+          }
+        } else if (e.key === 'Backspace' && input.value === '' && tags.size > 0) {
+          const lastTag = Array.from(tags)[tags.size - 1];
+          removeTag(lastTag);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          navigateSuggestions('down');
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          navigateSuggestions('up');
+        } else if (e.key === 'Escape') {
+          hideSuggestions();
+        }
+      });
+
+      container.addEventListener('click', () => {
+        input.focus();
+      });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) {
+          hideSuggestions();
+        }
+      });
+
+      return {
+        addTag,
+        removeTag,
+        getTags: () => Array.from(tags.values()), // Return original case values
+        clearTags: () => {
+          tags.clear();
+          renderTags();
+        }
+      };
+    }
+
+    let currentlyUsedInManager = null;
+    let aiTagsManager = null;
+
     // Populate dropdown options
     function populateDropdowns() {
       // Item IDs
@@ -683,6 +1022,16 @@
         option.textContent = loc;
         locationSelect.insertBefore(option, locationSelect.querySelector('option[value="__OTHER__"]'));
       });
+
+      // Initialize tag managers after dropdowns are populated
+      if (!currentlyUsedInManager) {
+        currentlyUsedInManager = createTagManager('currentlyUsedInInput', 'currentlyUsedInTagInput');
+      }
+      
+      if (!aiTagsManager) {
+        const suggestions = getSuggestedAITags();
+        aiTagsManager = createTagManager('aiTagsInput', 'aiTagsTagInput', suggestions);
+      }
     }
 
     async function loadInventory() {
@@ -700,7 +1049,7 @@
         const tbody = document.querySelector('#inventoryTable tbody');
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" class="no-results">
+            <td colspan="9" class="no-results">
               <i class="fas fa-exclamation-triangle"></i>
               <div>Error loading inventory data. Please try again later.</div>
             </td>
@@ -737,7 +1086,7 @@
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" class="no-results">
+            <td colspan="9" class="no-results">
               <i class="fas fa-search"></i>
               <div>No items found matching your criteria.</div>
             </td>
@@ -763,6 +1112,7 @@
           </td>
           <td>${escapeHtml(qtyAvail)} / ${escapeHtml(qtyOwned)}</td>
           <td>${escapeHtml(row['Location'] || '')}</td>
+          <td>${escapeHtml(row['Currently Used In'] || '')}</td>
           <td>${escapeHtml(row['Use Cases'] || '')}</td>
           <td>${escapeHtml(row['AI Tags'] || '')}</td>
         `;
@@ -1042,8 +1392,9 @@
         'Quantity In Use': document.getElementById('qtyInUse').value || '0',
         'Quantity Available': document.getElementById('qtyAvailable').value || document.getElementById('qtyOwned').value || '1',
         'Location': getFieldValue('location', 'locationOther'),
+        'Currently Used In': currentlyUsedInManager ? currentlyUsedInManager.getTags().join(', ') : '',
         'Use Cases': document.getElementById('useCases').value.trim(),
-        'AI Tags': document.getElementById('aiTags').value.trim()
+        'AI Tags': aiTagsManager ? aiTagsManager.getTags().join(', ') : ''
       };
 
       // Validate that Item Name is provided
@@ -1102,6 +1453,14 @@
           input.required = false;
         }
       });
+      
+      // Clear tag managers
+      if (currentlyUsedInManager) {
+        currentlyUsedInManager.clearTags();
+      }
+      if (aiTagsManager) {
+        aiTagsManager.clearTags();
+      }
     }
 
     // Reset form when modal is closed

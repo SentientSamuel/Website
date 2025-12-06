@@ -64,13 +64,14 @@ function doPost(e) {
         'Item Name': e.parameter['Item Name'] || '',
         'Category': e.parameter['Category'] || '',
         'Model / Version': e.parameter['Model / Version'] || '',
-        'Status': e.parameter['Status'] || 'Available',
         'Quantity Owned': e.parameter['Quantity Owned'] || '1',
         'Quantity In Use': e.parameter['Quantity In Use'] || '0',
         'Quantity Available': e.parameter['Quantity Available'] || e.parameter['Quantity Owned'] || '1',
+        'Status': '', // Status is auto-calculated from Quantity Available on the frontend, but we save it for compatibility
         'Location': e.parameter['Location'] || '',
         'Currently Used In': e.parameter['Currently Used In'] || '',
         'Use Cases': e.parameter['Use Cases'] || '',
+        'Notes': e.parameter['Notes'] || '',
         'AI Tags': e.parameter['AI Tags'] || ''
       };
     }
@@ -85,6 +86,10 @@ function doPost(e) {
     
     // Get headers to determine column order
     const headerRow = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    
+    // Calculate status from Quantity Available (0 = "In Use", >0 = "Available")
+    const qtyAvailable = parseInt(data['Quantity Available'] || '0');
+    data['Status'] = qtyAvailable === 0 ? 'In Use' : 'Available';
     
     // Create row array matching header order
     const row = headerRow.map(header => {

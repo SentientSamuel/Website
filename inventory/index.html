@@ -75,6 +75,59 @@
       min-width: 150px;
     }
     
+    .inventory-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn-export,
+    .btn-home {
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-export {
+      background-color: #f4623a;
+      color: white;
+    }
+    
+    .btn-export:hover {
+      background-color: #e55a2e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(244, 98, 58, 0.3);
+    }
+    
+    body.dark-mode .btn-export {
+      background-color: #ff8c42;
+    }
+    
+    body.dark-mode .btn-export:hover {
+      background-color: #ff7a2e;
+      box-shadow: 0 4px 8px rgba(255, 140, 66, 0.3);
+    }
+    
+    .btn-home {
+      background-color: var(--section-bg-light);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+    
+    .btn-home:hover {
+      background-color: var(--border-color);
+      transform: translateY(-2px);
+    }
+    
     .inventory-table-wrapper {
       overflow-x: auto;
       background-color: var(--card-bg);
@@ -203,6 +256,15 @@
         width: 100%;
       }
       
+      .inventory-actions {
+        margin-bottom: 1rem;
+      }
+      
+      .btn-export span,
+      .btn-home span {
+        display: none;
+      }
+      
       .inventory-table {
         font-size: 0.8rem;
       }
@@ -264,6 +326,12 @@
           <div class="inventory-header text-center">
             <h1 class="mt-0">Electronics Inventory</h1>
             <hr class="divider my-4">
+            <div class="inventory-actions justify-content-center">
+              <a href="../" class="btn-home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
+            </div>
           </div>
 
           <div class="inventory-filters">
@@ -276,6 +344,10 @@
               <option value="Needs Testing">Needs Testing</option>
               <option value="Loaned Out">Loaned Out</option>
             </select>
+            <button id="exportBtn" class="btn-export" title="Export filtered results to CSV">
+              <i class="fas fa-download"></i>
+              <span>Export CSV</span>
+            </button>
           </div>
 
           <div class="inventory-table-wrapper">
@@ -438,9 +510,91 @@
       return div.innerHTML;
     }
 
+    // Get currently filtered data
+    function getFilteredData() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      return inventoryData.filter(row => {
+        const name = (row['Item Name'] || '').toLowerCase();
+        const model = (row['Model / Version'] || '').toLowerCase();
+        const tags = (row['AI Tags'] || '').toLowerCase();
+        const status = (row['Status'] || '');
+
+        const matchesSearch =
+          !search ||
+          name.includes(search) ||
+          model.includes(search) ||
+          tags.includes(search);
+
+        const matchesStatus =
+          !statusFilter || status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+      });
+    }
+
+    // Export filtered data to CSV
+    function exportToCSV() {
+      const filtered = getFilteredData();
+      
+      if (filtered.length === 0) {
+        alert('No data to export. Please adjust your filters.');
+        return;
+      }
+
+      // Get all unique headers from the data
+      const allHeaders = new Set();
+      filtered.forEach(row => {
+        Object.keys(row).forEach(key => allHeaders.add(key));
+      });
+      const headers = Array.from(allHeaders);
+
+      // Create CSV content
+      const csvRows = [];
+      
+      // Add header row
+      csvRows.push(headers.map(h => escapeCSVField(h)).join(','));
+
+      // Add data rows
+      filtered.forEach(row => {
+        const values = headers.map(header => {
+          const value = row[header] || '';
+          return escapeCSVField(value);
+        });
+        csvRows.push(values.join(','));
+      });
+
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `inventory_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Escape CSV field (handle commas, quotes, newlines)
+    function escapeCSVField(field) {
+      if (field === null || field === undefined) {
+        return '';
+      }
+      const stringField = String(field);
+      // If field contains comma, quote, or newline, wrap in quotes and escape quotes
+      if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
+        return '"' + stringField.replace(/"/g, '""') + '"';
+      }
+      return stringField;
+    }
+
     // Event listeners
     document.getElementById('search').addEventListener('input', renderTable);
     document.getElementById('statusFilter').addEventListener('change', renderTable);
+    document.getElementById('exportBtn').addEventListener('click', exportToCSV);
 
     // If URL has ?id=ITEMID, auto-filter search box to that ID
     function applyIdFromURL() {

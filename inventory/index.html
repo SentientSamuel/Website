@@ -424,23 +424,6 @@
       background-color: rgba(52, 152, 219, 0.1);
     }
     
-    .status-Damaged {
-      border-color: #e74c3c;
-      color: #e74c3c;
-      background-color: rgba(231, 76, 60, 0.1);
-    }
-    
-    .status-Needs\ Testing {
-      border-color: #f1c40f;
-      color: #f1c40f;
-      background-color: rgba(241, 196, 15, 0.1);
-    }
-    
-    .status-Loaned\ Out {
-      border-color: #9b59b6;
-      color: #9b59b6;
-      background-color: rgba(155, 89, 182, 0.1);
-    }
     
     .loading-message {
       text-align: center;
@@ -573,9 +556,6 @@
               <option value="">All Statuses</option>
               <option value="Available">Available</option>
               <option value="In Use">In Use</option>
-              <option value="Damaged">Damaged</option>
-              <option value="Needs Testing">Needs Testing</option>
-              <option value="Loaned Out">Loaned Out</option>
             </select>
             <button id="exportBtn" class="btn-export" title="Export filtered results to CSV">
               <i class="fas fa-download"></i>
@@ -595,13 +575,14 @@
                   <th>Location</th>
                   <th>Currently Used In</th>
                   <th>Use Cases</th>
+                  <th>Notes</th>
                   <th>AI Tags</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td colspan="10" class="loading-message">
+                  <td colspan="11" class="loading-message">
                     <i class="fas fa-spinner"></i>
                     <div>Loading inventory...</div>
                   </td>
@@ -699,16 +680,6 @@
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="status">Status</label>
-                <select class="form-control" id="status">
-                  <option value="Available" selected>Available</option>
-                  <option value="In Use">In Use</option>
-                  <option value="Damaged">Damaged</option>
-                  <option value="Needs Testing">Needs Testing</option>
-                  <option value="Loaned Out">Loaned Out</option>
-                </select>
-              </div>
-              <div class="col-md-6 mb-3">
                 <label for="location">Location</label>
                 <select class="form-control" id="location">
                   <option value="">-- Select Location --</option>
@@ -716,6 +687,12 @@
                 </select>
                 <div class="other-input-wrapper" id="locationOtherWrapper">
                   <input type="text" class="form-control" id="locationOther" placeholder="Enter new Location (e.g., Lab A, Shelf 3)">
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Status</label>
+                <div class="form-control-plaintext" style="color: var(--text-muted); font-style: italic;">
+                  Automatically calculated from Quantity Available
                 </div>
               </div>
             </div>
@@ -747,6 +724,11 @@
             <div class="mb-3">
               <label for="useCases">Use Cases</label>
               <textarea class="form-control" id="useCases" rows="2" placeholder="Describe what this item is used for..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="notes">Notes</label>
+              <textarea class="form-control" id="notes" rows="2" placeholder="Additional information (e.g., '1 of the modules is broken', condition notes, etc.)..."></textarea>
+              <small class="form-text text-muted">Optional notes about the item's condition or any other relevant information</small>
             </div>
             <div class="mb-3">
               <label for="aiTags">AI Tags</label>
@@ -1150,7 +1132,7 @@
         const tbody = document.querySelector('#inventoryTable tbody');
         tbody.innerHTML = `
           <tr>
-            <td colspan="10" class="no-results">
+            <td colspan="11" class="no-results">
               <i class="fas fa-exclamation-triangle"></i>
               <div>Error loading inventory data. Please try again later.</div>
             </td>
@@ -1187,7 +1169,7 @@
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="10" class="no-results">
+            <td colspan="11" class="no-results">
               <i class="fas fa-search"></i>
               <div>No items found matching your criteria.</div>
             </td>
@@ -1201,8 +1183,9 @@
 
         const itemId = row['Item ID'] || '';
         const qtyOwned = row['Quantity Owned'] || '';
-        const qtyAvail = row['Quantity Available'] || '';
-        const status = row['Status'] || '';
+        const qtyAvail = parseInt(row['Quantity Available'] || '0');
+        // Calculate status automatically: if qty available is 0, it's "In Use", otherwise "Available"
+        const status = qtyAvail === 0 ? 'In Use' : 'Available';
 
         // Escape data for use in onclick attributes
         const rowJson = JSON.stringify(row).replace(/"/g, '&quot;');
@@ -1219,6 +1202,7 @@
           <td>${escapeHtml(row['Location'] || '')}</td>
           <td>${escapeHtml(row['Currently Used In'] || '')}</td>
           <td>${escapeHtml(row['Use Cases'] || '')}</td>
+          <td>${escapeHtml(row['Notes'] || '')}</td>
           <td>${escapeHtml(row['AI Tags'] || '')}</td>
           <td>
             <div class="action-buttons">
@@ -1251,7 +1235,9 @@
         const name = (row['Item Name'] || '').toLowerCase();
         const model = (row['Model / Version'] || '').toLowerCase();
         const tags = (row['AI Tags'] || '').toLowerCase();
-        const status = (row['Status'] || '');
+        // Calculate status from quantity available
+        const qtyAvail = parseInt(row['Quantity Available'] || '0');
+        const status = qtyAvail === 0 ? 'In Use' : 'Available';
 
         const matchesSearch =
           !search ||
@@ -1537,7 +1523,13 @@
         'Location': getFieldValue('location', 'locationOther'),
         'Currently Used In': currentlyUsedInManager ? currentlyUsedInManager.getTags().join(', ') : '',
         'Use Cases': document.getElementById('useCases').value.trim(),
+        'Notes': document.getElementById('notes').value.trim(),
         'AI Tags': aiTagsManager ? aiTagsManager.getTags().join(', ') : ''
+      };
+
+      // Calculate status automatically based on Quantity Available
+      const qtyAvailable = parseInt(itemData['Quantity Available'] || '0');
+      itemData['Status'] = qtyAvailable === 0 ? 'In Use' : 'Available';
       };
 
       // Validate that Item Name is provided
@@ -1582,7 +1574,7 @@
       document.getElementById('qtyOwned').value = '1';
       document.getElementById('qtyInUse').value = '0';
       document.getElementById('qtyAvailable').value = '1';
-      document.getElementById('status').value = 'Available';
+      document.getElementById('notes').value = '';
       
       // Reset all "Other" input wrappers
       document.querySelectorAll('.other-input-wrapper').forEach(wrapper => {
@@ -1645,12 +1637,12 @@
       setDropdownOrOther('itemName', 'itemNameOther', itemData['Item Name'] || '');
       setDropdownOrOther('category', 'categoryOther', itemData['Category'] || '');
       setDropdownOrOther('model', 'modelOther', itemData['Model / Version'] || '');
-      document.getElementById('status').value = itemData['Status'] || 'Available';
       setDropdownOrOther('location', 'locationOther', itemData['Location'] || '');
       document.getElementById('qtyOwned').value = itemData['Quantity Owned'] || '1';
       document.getElementById('qtyInUse').value = itemData['Quantity In Use'] || '0';
       document.getElementById('qtyAvailable').value = itemData['Quantity Available'] || itemData['Quantity Owned'] || '1';
       document.getElementById('useCases').value = itemData['Use Cases'] || '';
+      document.getElementById('notes').value = itemData['Notes'] || '';
       
       // Populate tag fields
       if (currentlyUsedInManager) {

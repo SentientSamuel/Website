@@ -1493,10 +1493,15 @@
                 submitBtn.innerHTML = originalText;
                 
                 // Reset edit mode
-                document.getElementById('editMode').value = 'false';
-                document.getElementById('editItemId').value = '';
-                document.getElementById('addItemModalLabel').textContent = 'Add New Item';
-                document.getElementById('submitBtnText').textContent = 'Add Item';
+                const editModeEl = document.getElementById('editMode');
+                const editItemIdEl = document.getElementById('editItemId');
+                const modalLabelEl = document.getElementById('addItemModalLabel');
+                const submitBtnTextEl = document.getElementById('submitBtnText');
+                
+                if (editModeEl) editModeEl.value = 'false';
+                if (editItemIdEl) editItemIdEl.value = '';
+                if (modalLabelEl) modalLabelEl.textContent = 'Add New Item';
+                if (submitBtnTextEl) submitBtnTextEl.textContent = 'Add Item';
               }, 1000);
               
               resolve(true);
@@ -1669,10 +1674,15 @@
       }
       
       // Reset edit mode
-      document.getElementById('editMode').value = 'false';
-      document.getElementById('editItemId').value = '';
-      document.getElementById('addItemModalLabel').textContent = 'Add New Item';
-      document.getElementById('submitBtnText').textContent = 'Add Item';
+      const editModeEl = document.getElementById('editMode');
+      const editItemIdEl = document.getElementById('editItemId');
+      const modalLabelEl = document.getElementById('addItemModalLabel');
+      const submitBtnTextEl = document.getElementById('submitBtnText');
+      
+      if (editModeEl) editModeEl.value = 'false';
+      if (editItemIdEl) editItemIdEl.value = '';
+      if (modalLabelEl) modalLabelEl.textContent = 'Add New Item';
+      if (submitBtnTextEl) submitBtnTextEl.textContent = 'Add Item';
     }
 
     // Reset form when modal is closed
@@ -1691,10 +1701,15 @@
     // Make functions global so they can be called from onclick handlers
     window.editItem = function(itemData) {
       // Set edit mode
-      document.getElementById('editMode').value = 'true';
-      document.getElementById('editItemId').value = itemData['Item ID'] || '';
-      document.getElementById('addItemModalLabel').textContent = 'Edit Item';
-      document.getElementById('submitBtnText').textContent = 'Save Changes';
+      const editModeEl = document.getElementById('editMode');
+      const editItemIdEl = document.getElementById('editItemId');
+      const modalLabelEl = document.getElementById('addItemModalLabel');
+      const submitBtnTextEl = document.getElementById('submitBtnText');
+      
+      if (editModeEl) editModeEl.value = 'true';
+      if (editItemIdEl) editItemIdEl.value = itemData['Item ID'] || '';
+      if (modalLabelEl) modalLabelEl.textContent = 'Edit Item';
+      if (submitBtnTextEl) submitBtnTextEl.textContent = 'Save Changes';
       
       // Populate form fields
       setDropdownOrOther('itemId', 'itemIdOther', itemData['Item ID'] || '');
@@ -1702,11 +1717,18 @@
       setDropdownOrOther('category', 'categoryOther', itemData['Category'] || '');
       setDropdownOrOther('model', 'modelOther', itemData['Model / Version'] || '');
       setDropdownOrOther('location', 'locationOther', itemData['Location'] || '');
-      document.getElementById('qtyOwned').value = itemData['Quantity Owned'] || '1';
-      document.getElementById('qtyInUse').value = itemData['Quantity In Use'] || '0';
-      document.getElementById('qtyAvailable').value = itemData['Quantity Available'] || itemData['Quantity Owned'] || '1';
-      document.getElementById('useCases').value = itemData['Use Cases'] || '';
-      document.getElementById('notes').value = itemData['Notes'] || '';
+      
+      const qtyOwnedEl = document.getElementById('qtyOwned');
+      const qtyInUseEl = document.getElementById('qtyInUse');
+      const qtyAvailableEl = document.getElementById('qtyAvailable');
+      const useCasesEl = document.getElementById('useCases');
+      const notesEl = document.getElementById('notes');
+      
+      if (qtyOwnedEl) qtyOwnedEl.value = itemData['Quantity Owned'] || '1';
+      if (qtyInUseEl) qtyInUseEl.value = itemData['Quantity In Use'] || '0';
+      if (qtyAvailableEl) qtyAvailableEl.value = itemData['Quantity Available'] || itemData['Quantity Owned'] || '1';
+      if (useCasesEl) useCasesEl.value = itemData['Use Cases'] || '';
+      if (notesEl) notesEl.value = itemData['Notes'] || '';
       
       // Populate tag fields
       if (currentlyUsedInManager) {
@@ -1739,12 +1761,23 @@
       const otherInput = document.getElementById(otherInputId);
       const wrapper = document.getElementById(otherInputId + 'Wrapper');
       
+      if (!select) {
+        console.warn(`Select element with id '${selectId}' not found`);
+        return;
+      }
+      
+      if (!value) {
+        select.value = '';
+        if (wrapper) wrapper.classList.remove('show');
+        return;
+      }
+      
       // Check if value exists in dropdown
       let found = false;
       for (let option of select.options) {
         if (option.value === value) {
           select.value = value;
-          wrapper.classList.remove('show');
+          if (wrapper) wrapper.classList.remove('show');
           found = true;
           break;
         }
@@ -1753,8 +1786,8 @@
       if (!found && value) {
         // Set "Other" option and show input
         select.value = '__OTHER__';
-        wrapper.classList.add('show');
-        otherInput.value = value;
+        if (wrapper) wrapper.classList.add('show');
+        if (otherInput) otherInput.value = value;
       } else if (!value) {
         select.value = '';
         wrapper.classList.remove('show');

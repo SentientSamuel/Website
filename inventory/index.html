@@ -1058,62 +1058,108 @@
     function populateDropdowns() {
       // Item IDs
       const itemIdSelect = document.getElementById('itemId');
+      if (!itemIdSelect) {
+        console.warn('Item ID select not found, skipping dropdown population');
+        return;
+      }
+      
       const itemIds = getUniqueValues('Item ID');
       itemIds.forEach(id => {
         const option = document.createElement('option');
         option.value = id;
         option.textContent = id;
-        itemIdSelect.insertBefore(option, itemIdSelect.querySelector('option[value="__OTHER__"]'));
+        const otherOption = itemIdSelect.querySelector('option[value="__OTHER__"]');
+        if (otherOption) {
+          itemIdSelect.insertBefore(option, otherOption);
+        } else {
+          itemIdSelect.appendChild(option);
+        }
       });
 
       // Item Names
       const itemNameSelect = document.getElementById('itemName');
-      const itemNames = getUniqueValues('Item Name');
-      itemNames.forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        itemNameSelect.insertBefore(option, itemNameSelect.querySelector('option[value="__OTHER__"]'));
-      });
+      if (itemNameSelect) {
+        const itemNames = getUniqueValues('Item Name');
+        itemNames.forEach(name => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          const otherOption = itemNameSelect.querySelector('option[value="__OTHER__"]');
+          if (otherOption) {
+            itemNameSelect.insertBefore(option, otherOption);
+          } else {
+            itemNameSelect.appendChild(option);
+          }
+        });
+      }
 
       // Categories
       const categorySelect = document.getElementById('category');
-      const categories = getUniqueValues('Category');
-      categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat;
-        option.textContent = cat;
-        categorySelect.insertBefore(option, categorySelect.querySelector('option[value="__OTHER__"]'));
-      });
+      if (categorySelect) {
+        const categories = getUniqueValues('Category');
+        categories.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat;
+          option.textContent = cat;
+          const otherOption = categorySelect.querySelector('option[value="__OTHER__"]');
+          if (otherOption) {
+            categorySelect.insertBefore(option, otherOption);
+          } else {
+            categorySelect.appendChild(option);
+          }
+        });
+      }
 
       // Models/Versions
       const modelSelect = document.getElementById('model');
-      const models = getUniqueValues('Model / Version');
-      models.forEach(model => {
-        const option = document.createElement('option');
-        option.value = model;
-        option.textContent = model;
-        modelSelect.insertBefore(option, modelSelect.querySelector('option[value="__OTHER__"]'));
-      });
+      if (modelSelect) {
+        const models = getUniqueValues('Model / Version');
+        models.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          const otherOption = modelSelect.querySelector('option[value="__OTHER__"]');
+          if (otherOption) {
+            modelSelect.insertBefore(option, otherOption);
+          } else {
+            modelSelect.appendChild(option);
+          }
+        });
+      }
 
       // Locations
       const locationSelect = document.getElementById('location');
-      const locations = getUniqueValues('Location');
-      locations.forEach(loc => {
-        const option = document.createElement('option');
-        option.value = loc;
-        option.textContent = loc;
-        locationSelect.insertBefore(option, locationSelect.querySelector('option[value="__OTHER__"]'));
-      });
+      if (locationSelect) {
+        const locations = getUniqueValues('Location');
+        locations.forEach(loc => {
+          const option = document.createElement('option');
+          option.value = loc;
+          option.textContent = loc;
+          const otherOption = locationSelect.querySelector('option[value="__OTHER__"]');
+          if (otherOption) {
+            locationSelect.insertBefore(option, otherOption);
+          } else {
+            locationSelect.appendChild(option);
+          }
+        });
+      }
 
-      // Initialize tag managers after dropdowns are populated
-      if (!currentlyUsedInManager) {
-        currentlyUsedInManager = createTagManager('currentlyUsedInInput', 'currentlyUsedInTagInput');
+      // Initialize tag managers after dropdowns are populated (only if modal elements exist)
+      if (!currentlyUsedInManager && document.getElementById('currentlyUsedInInput')) {
+        try {
+          currentlyUsedInManager = createTagManager('currentlyUsedInInput', 'currentlyUsedInTagInput');
+        } catch (error) {
+          console.error('Error initializing currentlyUsedInManager:', error);
+        }
       }
       
-      if (!aiTagsManager) {
-        const suggestions = getSuggestedAITags();
-        aiTagsManager = createTagManager('aiTagsInput', 'aiTagsTagInput', suggestions);
+      if (!aiTagsManager && document.getElementById('aiTagsInput')) {
+        try {
+          const suggestions = getSuggestedAITags();
+          aiTagsManager = createTagManager('aiTagsInput', 'aiTagsTagInput', suggestions);
+        } catch (error) {
+          console.error('Error initializing aiTagsManager:', error);
+        }
       }
     }
 
@@ -1124,20 +1170,38 @@
           throw new Error('Failed to load inventory data');
         }
         const text = await res.text();
+        console.log('CSV data received, length:', text.length);
         inventoryData = parseCSV(text);
-        renderTable();
-        populateDropdowns(); // Populate dropdowns after loading data
+        console.log('Parsed inventory data:', inventoryData.length, 'items');
+        
+        try {
+          renderTable();
+        } catch (error) {
+          console.error('Error rendering table:', error);
+          throw error;
+        }
+        
+        try {
+          populateDropdowns(); // Populate dropdowns after loading data
+        } catch (error) {
+          console.error('Error populating dropdowns:', error);
+          // Don't throw - dropdowns are not critical for display
+        }
       } catch (error) {
         console.error('Error loading inventory:', error);
+        console.error('Error stack:', error.stack);
         const tbody = document.querySelector('#inventoryTable tbody');
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="11" class="no-results">
-              <i class="fas fa-exclamation-triangle"></i>
-              <div>Error loading inventory data. Please try again later.</div>
-            </td>
-          </tr>
-        `;
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="11" class="no-results">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>Error loading inventory data: ${error.message}</div>
+                <div style="margin-top: 1rem; font-size: 0.8rem;">Check console for details.</div>
+              </td>
+            </tr>
+          `;
+        }
       }
     }
 

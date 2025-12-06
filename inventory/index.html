@@ -1582,7 +1582,6 @@
         'Item Name': getFieldValue('itemName', 'itemNameOther'),
         'Category': getFieldValue('category', 'categoryOther'),
         'Model / Version': getFieldValue('model', 'modelOther'),
-        'Status': document.getElementById('status').value,
         'Quantity Owned': document.getElementById('qtyOwned').value || '1',
         'Quantity In Use': document.getElementById('qtyInUse').value || '0',
         'Quantity Available': document.getElementById('qtyAvailable').value || document.getElementById('qtyOwned').value || '1',
@@ -1596,7 +1595,6 @@
       // Calculate status automatically based on Quantity Available
       const qtyAvailable = parseInt(itemData['Quantity Available'] || '0');
       itemData['Status'] = qtyAvailable === 0 ? 'In Use' : 'Available';
-      };
 
       // Validate that Item Name is provided
       if (!itemData['Item Name']) {

@@ -760,62 +760,109 @@
       renderTable();
     }
 
-    // Add item to Google Sheets
-    async function addItem(itemData) {
-      try {
+    // Add item to Google Sheets using form submission to avoid CORS
+    function addItem(itemData) {
+      return new Promise((resolve, reject) => {
         // Show loading state
         const submitBtn = document.getElementById('submitItemBtn');
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
 
-        // Submit to Google Apps Script Web App
-        const response = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(itemData)
+        // Create a hidden form for submission (avoids CORS)
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = WEB_APP_URL;
+        form.target = 'hiddenIframe';
+        form.style.display = 'none';
+
+        // Create hidden iframe to receive response
+        let iframe = document.getElementById('hiddenIframe');
+        if (!iframe) {
+          iframe = document.createElement('iframe');
+          iframe.id = 'hiddenIframe';
+          iframe.name = 'hiddenIframe';
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+        }
+
+        // Add all form fields (Google Apps Script receives these as form parameters)
+        // The script should access them via e.parameter['Item Name'], etc.
+        Object.keys(itemData).forEach(key => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = itemData[key] || '';
+          form.appendChild(input);
         });
+        
+        // Also send as JSON in a single field for easier parsing
+        const jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'jsonData';
+        jsonInput.value = JSON.stringify(itemData);
+        form.appendChild(jsonInput);
 
-        // Google Apps Script returns text, need to parse it
-        const responseText = await response.text();
-        let result;
-        try {
-          result = JSON.parse(responseText);
-        } catch (e) {
-          // If response is not JSON, treat as error
-          result = { success: false, error: responseText || 'Unknown error occurred' };
-        }
+        // Add form to body and submit
+        document.body.appendChild(form);
 
-        if (result.success) {
-          // Show success message
-          showAlert('Item added successfully! Reloading inventory...', 'success');
-          
-          // Reload inventory after a short delay
-          setTimeout(async () => {
-            await loadInventory();
-            // Close modal and reset form
-            $('#addItemModal').modal('hide');
-            document.getElementById('addItemForm').reset();
-            document.getElementById('addItemAlert').innerHTML = '';
-          }, 1000);
-          
-          return true;
-        } else {
-          showAlert('Error: ' + (result.error || 'Failed to add item'), 'danger');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-          return false;
-        }
-      } catch (error) {
-        console.error('Error adding item:', error);
-        showAlert('Failed to add item. Please check your connection and try again.', 'danger');
-        const submitBtn = document.getElementById('submitItemBtn');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Add Item';
-        return false;
-      }
+        // Set up response handler
+        let responseReceived = false;
+        const timeout = setTimeout(() => {
+          if (!responseReceived) {
+            responseReceived = true;
+            document.body.removeChild(form);
+            showAlert('Request timed out. The item may have been added - please refresh to check.', 'danger');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            reject(new Error('Timeout'));
+          }
+        }, 10000); // 10 second timeout
+
+        // Listen for iframe load (response received)
+        iframe.onload = function() {
+          if (!responseReceived) {
+            responseReceived = true;
+            clearTimeout(timeout);
+            document.body.removeChild(form);
+
+            // Assume success if iframe loads (Google Apps Script redirects on success)
+            // Wait a moment for the script to process, then reload inventory
+            setTimeout(async () => {
+              showAlert('Item added successfully! Reloading inventory...', 'success');
+              
+              // Reload inventory after a short delay
+              setTimeout(async () => {
+                await loadInventory();
+                // Close modal and reset form
+                $('#addItemModal').modal('hide');
+                document.getElementById('addItemForm').reset();
+                document.getElementById('addItemAlert').innerHTML = '';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+              }, 1000);
+              
+              resolve(true);
+            }, 500);
+          }
+        };
+
+        // Handle iframe errors
+        iframe.onerror = function() {
+          if (!responseReceived) {
+            responseReceived = true;
+            clearTimeout(timeout);
+            document.body.removeChild(form);
+            showAlert('Error submitting item. Please try again.', 'danger');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            reject(new Error('Submission failed'));
+          }
+        };
+
+        // Submit the form
+        form.submit();
+      });
     }
 
     // Show alert message in modal
@@ -827,7 +874,7 @@
     }
 
     // Handle form submission
-    document.getElementById('submitItemBtn').addEventListener('click', async function() {
+    document.getElementById('submitItemBtn').addEventListener('click', function() {
       const form = document.getElementById('addItemForm');
       
       // Validate required fields
@@ -857,8 +904,11 @@
         return;
       }
 
-      // Submit
-      await addItem(itemData);
+      // Submit (using form submission to avoid CORS)
+      addItem(itemData).catch(error => {
+        console.error('Error adding item:', error);
+        // Error already handled in addItem function
+      });
     });
 
     // Auto-calculate available quantity when owned or in-use changes

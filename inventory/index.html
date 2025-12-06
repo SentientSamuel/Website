@@ -557,6 +557,10 @@
               <option value="Available">Available</option>
               <option value="In Use">In Use</option>
             </select>
+            <button id="refreshBtn" class="btn-export" title="Refresh inventory data" style="margin-right: 10px;">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </button>
             <button id="exportBtn" class="btn-export" title="Export filtered results to CSV">
               <i class="fas fa-download"></i>
               <span>Export CSV</span>
@@ -1379,6 +1383,29 @@
     document.getElementById('search').addEventListener('input', renderTable);
     document.getElementById('statusFilter').addEventListener('change', renderTable);
     document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+    
+    // Refresh button to reload inventory data
+    document.getElementById('refreshBtn').addEventListener('click', async function() {
+      const btn = this;
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Refreshing...</span>';
+      
+      try {
+        await loadInventory();
+        btn.innerHTML = '<i class="fas fa-check"></i> <span>Refreshed!</span>';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }, 2000);
+      } catch (error) {
+        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>Error</span>';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }, 2000);
+      }
+    });
 
     // If URL has ?id=ITEMID, auto-filter search box to that ID
     function applyIdFromURL() {
@@ -1474,7 +1501,46 @@
           if (!responseReceived) {
             responseReceived = true;
             clearTimeout(timeout);
+            
+            // Try to detect errors by checking iframe content or URL
+            let hasError = false;
+            try {
+              // Check if we can access iframe content (may be blocked by CORS)
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const bodyText = iframeDoc.body ? iframeDoc.body.innerText.toLowerCase() : '';
+              
+              // Check for common error indicators
+              if (bodyText.includes('403') || 
+                  bodyText.includes('forbidden') || 
+                  bodyText.includes('error') ||
+                  bodyText.includes('permission denied')) {
+                hasError = true;
+              }
+              
+              // Check iframe URL for error indicators
+              try {
+                const iframeUrl = iframe.contentWindow.location.href;
+                if (iframeUrl.includes('error') || iframeUrl.includes('403')) {
+                  hasError = true;
+                }
+              } catch (e) {
+                // Can't access iframe URL due to CORS - that's okay
+              }
+            } catch (e) {
+              // Can't access iframe content due to CORS - assume success for now
+              // The user can manually refresh to see if the change was applied
+            }
+            
             document.body.removeChild(form);
+
+            if (hasError) {
+              // Show error message about 403/permissions
+              showAlert('Error: Permission denied (403). Your Google Apps Script may need to be redeployed or permissions updated. The change may not have been saved - please check your Google Sheet and use the Refresh button to sync.', 'danger');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+              reject(new Error('403 Forbidden'));
+              return;
+            }
 
             // Assume success if iframe loads (Google Apps Script redirects on success)
             // Wait a moment for the script to process, then reload inventory

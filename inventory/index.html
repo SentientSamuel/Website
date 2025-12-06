@@ -1152,7 +1152,9 @@
         const name = (row['Item Name'] || '').toLowerCase();
         const model = (row['Model / Version'] || '').toLowerCase();
         const tags = (row['AI Tags'] || '').toLowerCase();
-        const status = (row['Status'] || '');
+        // Calculate status from quantity available
+        const qtyAvail = parseInt(row['Quantity Available'] || '0');
+        const status = qtyAvail === 0 ? 'In Use' : 'Available';
 
         const matchesSearch =
           !search ||

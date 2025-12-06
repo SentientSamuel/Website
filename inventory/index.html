@@ -1058,6 +1058,44 @@
     let currentlyUsedInManager = null;
     let aiTagsManager = null;
 
+    // Helper function to clear dropdown options while preserving default options
+    function clearDropdownOptions(selectElement) {
+      if (!selectElement) return;
+      
+      // Store the placeholder text and "__OTHER__" option text
+      let placeholderText = '';
+      let otherOptionText = '';
+      
+      // Find and store default options
+      for (let i = 0; i < selectElement.options.length; i++) {
+        const option = selectElement.options[i];
+        if (option.value === '') {
+          placeholderText = option.textContent;
+        } else if (option.value === '__OTHER__') {
+          otherOptionText = option.textContent;
+        }
+      }
+      
+      // Clear all options
+      selectElement.innerHTML = '';
+      
+      // Re-add placeholder if it existed
+      if (placeholderText) {
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = '';
+        placeholderOption.textContent = placeholderText;
+        selectElement.appendChild(placeholderOption);
+      }
+      
+      // Re-add "__OTHER__" option if it existed
+      if (otherOptionText) {
+        const otherOption = document.createElement('option');
+        otherOption.value = '__OTHER__';
+        otherOption.textContent = otherOptionText;
+        selectElement.appendChild(otherOption);
+      }
+    }
+
     // Populate dropdown options
     function populateDropdowns() {
       // Item IDs
@@ -1066,6 +1104,9 @@
         console.warn('Item ID select not found, skipping dropdown population');
         return;
       }
+      
+      // Clear existing options before repopulating
+      clearDropdownOptions(itemIdSelect);
       
       const itemIds = getUniqueValues('Item ID');
       itemIds.forEach(id => {
@@ -1083,6 +1124,7 @@
       // Item Names
       const itemNameSelect = document.getElementById('itemName');
       if (itemNameSelect) {
+        clearDropdownOptions(itemNameSelect);
         const itemNames = getUniqueValues('Item Name');
         itemNames.forEach(name => {
           const option = document.createElement('option');
@@ -1100,6 +1142,7 @@
       // Categories
       const categorySelect = document.getElementById('category');
       if (categorySelect) {
+        clearDropdownOptions(categorySelect);
         const categories = getUniqueValues('Category');
         categories.forEach(cat => {
           const option = document.createElement('option');
@@ -1117,6 +1160,7 @@
       // Models/Versions
       const modelSelect = document.getElementById('model');
       if (modelSelect) {
+        clearDropdownOptions(modelSelect);
         const models = getUniqueValues('Model / Version');
         models.forEach(model => {
           const option = document.createElement('option');
@@ -1134,6 +1178,7 @@
       // Locations
       const locationSelect = document.getElementById('location');
       if (locationSelect) {
+        clearDropdownOptions(locationSelect);
         const locations = getUniqueValues('Location');
         locations.forEach(loc => {
           const option = document.createElement('option');

@@ -175,6 +175,23 @@
       font-weight: 500;
     }
     
+    .other-input-wrapper {
+      margin-top: 0.5rem;
+      display: none;
+    }
+    
+    .other-input-wrapper.show {
+      display: block;
+    }
+    
+    .other-input-wrapper input {
+      border-left: 3px solid #f4623a;
+    }
+    
+    body.dark-mode .other-input-wrapper input {
+      border-left-color: #ff8c42;
+    }
+    
     .alert {
       border-radius: 0.25rem;
       padding: 0.75rem 1rem;
@@ -464,21 +481,45 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="itemId">Item ID</label>
-                <input type="text" class="form-control" id="itemId" placeholder="e.g., ELEC-001">
+                <select class="form-control" id="itemId">
+                  <option value="">-- Select Item ID --</option>
+                  <option value="__OTHER__">Other / Add New</option>
+                </select>
+                <div class="other-input-wrapper" id="itemIdOtherWrapper">
+                  <input type="text" class="form-control" id="itemIdOther" placeholder="Enter new Item ID (e.g., ELEC-001)">
+                </div>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="itemName">Item Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="itemName" required placeholder="e.g., Arduino Uno">
+                <select class="form-control" id="itemName" required>
+                  <option value="">-- Select Item Name --</option>
+                  <option value="__OTHER__">Other / Add New</option>
+                </select>
+                <div class="other-input-wrapper" id="itemNameOtherWrapper">
+                  <input type="text" class="form-control" id="itemNameOther" placeholder="Enter new Item Name (e.g., Arduino Uno)" required>
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="category">Category</label>
-                <input type="text" class="form-control" id="category" placeholder="e.g., Microcontroller">
+                <select class="form-control" id="category">
+                  <option value="">-- Select Category --</option>
+                  <option value="__OTHER__">Other / Add New</option>
+                </select>
+                <div class="other-input-wrapper" id="categoryOtherWrapper">
+                  <input type="text" class="form-control" id="categoryOther" placeholder="Enter new Category (e.g., Microcontroller)">
+                </div>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="model">Model / Version</label>
-                <input type="text" class="form-control" id="model" placeholder="e.g., R3">
+                <select class="form-control" id="model">
+                  <option value="">-- Select Model / Version --</option>
+                  <option value="__OTHER__">Other / Add New</option>
+                </select>
+                <div class="other-input-wrapper" id="modelOtherWrapper">
+                  <input type="text" class="form-control" id="modelOther" placeholder="Enter new Model / Version (e.g., R3)">
+                </div>
               </div>
             </div>
             <div class="row">
@@ -494,7 +535,13 @@
               </div>
               <div class="col-md-6 mb-3">
                 <label for="location">Location</label>
-                <input type="text" class="form-control" id="location" placeholder="e.g., Lab A, Shelf 3">
+                <select class="form-control" id="location">
+                  <option value="">-- Select Location --</option>
+                  <option value="__OTHER__">Other / Add New</option>
+                </select>
+                <div class="other-input-wrapper" id="locationOtherWrapper">
+                  <input type="text" class="form-control" id="locationOther" placeholder="Enter new Location (e.g., Lab A, Shelf 3)">
+                </div>
               </div>
             </div>
             <div class="row">
@@ -573,6 +620,71 @@
 
     let inventoryData = [];
 
+    // Extract unique values from inventory data for dropdowns
+    function getUniqueValues(fieldName) {
+      const values = new Set();
+      inventoryData.forEach(item => {
+        const value = item[fieldName];
+        if (value && value.trim() !== '') {
+          values.add(value.trim());
+        }
+      });
+      return Array.from(values).sort();
+    }
+
+    // Populate dropdown options
+    function populateDropdowns() {
+      // Item IDs
+      const itemIdSelect = document.getElementById('itemId');
+      const itemIds = getUniqueValues('Item ID');
+      itemIds.forEach(id => {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = id;
+        itemIdSelect.insertBefore(option, itemIdSelect.querySelector('option[value="__OTHER__"]'));
+      });
+
+      // Item Names
+      const itemNameSelect = document.getElementById('itemName');
+      const itemNames = getUniqueValues('Item Name');
+      itemNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        itemNameSelect.insertBefore(option, itemNameSelect.querySelector('option[value="__OTHER__"]'));
+      });
+
+      // Categories
+      const categorySelect = document.getElementById('category');
+      const categories = getUniqueValues('Category');
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categorySelect.insertBefore(option, categorySelect.querySelector('option[value="__OTHER__"]'));
+      });
+
+      // Models/Versions
+      const modelSelect = document.getElementById('model');
+      const models = getUniqueValues('Model / Version');
+      models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        modelSelect.insertBefore(option, modelSelect.querySelector('option[value="__OTHER__"]'));
+      });
+
+      // Locations
+      const locationSelect = document.getElementById('location');
+      const locations = getUniqueValues('Location');
+      locations.forEach(loc => {
+        const option = document.createElement('option');
+        option.value = loc;
+        option.textContent = loc;
+        locationSelect.insertBefore(option, locationSelect.querySelector('option[value="__OTHER__"]'));
+      });
+    }
+
     async function loadInventory() {
       try {
         const res = await fetch(SHEET_CSV_URL);
@@ -582,6 +694,7 @@
         const text = await res.text();
         inventoryData = parseCSV(text);
         renderTable();
+        populateDropdowns(); // Populate dropdowns after loading data
       } catch (error) {
         console.error('Error loading inventory:', error);
         const tbody = document.querySelector('#inventoryTable tbody');
@@ -831,13 +944,12 @@
             setTimeout(async () => {
               showAlert('Item added successfully! Reloading inventory...', 'success');
               
-              // Reload inventory after a short delay
+              // Reload inventory after a short delay (this will refresh dropdowns)
               setTimeout(async () => {
-                await loadInventory();
+                await loadInventory(); // This will repopulate dropdowns with new data
                 // Close modal and reset form
                 $('#addItemModal').modal('hide');
-                document.getElementById('addItemForm').reset();
-                document.getElementById('addItemAlert').innerHTML = '';
+                resetAddItemForm();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
               }, 1000);
@@ -873,27 +985,63 @@
       alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    // Handle "Other" selection in dropdowns
+    function setupDropdownHandlers() {
+      const dropdowns = [
+        { select: 'itemId', other: 'itemIdOther', wrapper: 'itemIdOtherWrapper' },
+        { select: 'itemName', other: 'itemNameOther', wrapper: 'itemNameOtherWrapper', required: true },
+        { select: 'category', other: 'categoryOther', wrapper: 'categoryOtherWrapper' },
+        { select: 'model', other: 'modelOther', wrapper: 'modelOtherWrapper' },
+        { select: 'location', other: 'locationOther', wrapper: 'locationOtherWrapper' }
+      ];
+
+      dropdowns.forEach(({ select, other, wrapper, required }) => {
+        const selectEl = document.getElementById(select);
+        const otherInput = document.getElementById(other);
+        const wrapperEl = document.getElementById(wrapper);
+
+        selectEl.addEventListener('change', function() {
+          if (this.value === '__OTHER__') {
+            wrapperEl.classList.add('show');
+            if (required) {
+              otherInput.required = true;
+            }
+            otherInput.focus();
+          } else {
+            wrapperEl.classList.remove('show');
+            otherInput.value = '';
+            if (required) {
+              otherInput.required = false;
+            }
+          }
+        });
+      });
+    }
+
+    // Get value from dropdown or "Other" input
+    function getFieldValue(fieldId, otherFieldId) {
+      const select = document.getElementById(fieldId);
+      if (select.value === '__OTHER__') {
+        return document.getElementById(otherFieldId).value.trim();
+      }
+      return select.value.trim();
+    }
+
     // Handle form submission
     document.getElementById('submitItemBtn').addEventListener('click', function() {
       const form = document.getElementById('addItemForm');
       
-      // Validate required fields
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-
-      // Collect form data
+      // Collect form data (using dropdowns or "Other" inputs)
       const itemData = {
-        'Item ID': document.getElementById('itemId').value.trim(),
-        'Item Name': document.getElementById('itemName').value.trim(),
-        'Category': document.getElementById('category').value.trim(),
-        'Model / Version': document.getElementById('model').value.trim(),
+        'Item ID': getFieldValue('itemId', 'itemIdOther'),
+        'Item Name': getFieldValue('itemName', 'itemNameOther'),
+        'Category': getFieldValue('category', 'categoryOther'),
+        'Model / Version': getFieldValue('model', 'modelOther'),
         'Status': document.getElementById('status').value,
         'Quantity Owned': document.getElementById('qtyOwned').value || '1',
         'Quantity In Use': document.getElementById('qtyInUse').value || '0',
         'Quantity Available': document.getElementById('qtyAvailable').value || document.getElementById('qtyOwned').value || '1',
-        'Location': document.getElementById('location').value.trim(),
+        'Location': getFieldValue('location', 'locationOther'),
         'Use Cases': document.getElementById('useCases').value.trim(),
         'AI Tags': document.getElementById('aiTags').value.trim()
       };
@@ -901,6 +1049,13 @@
       // Validate that Item Name is provided
       if (!itemData['Item Name']) {
         showAlert('Item Name is required', 'danger');
+        // Focus on the appropriate field
+        const itemNameSelect = document.getElementById('itemName');
+        if (itemNameSelect.value === '__OTHER__') {
+          document.getElementById('itemNameOther').focus();
+        } else {
+          itemNameSelect.focus();
+        }
         return;
       }
 
@@ -926,17 +1081,40 @@
       document.getElementById('qtyAvailable').value = available;
     });
 
-    // Reset form when modal is closed
-    $('#addItemModal').on('hidden.bs.modal', function() {
+    // Reset add item form
+    function resetAddItemForm() {
       document.getElementById('addItemForm').reset();
       document.getElementById('addItemAlert').innerHTML = '';
       document.getElementById('qtyOwned').value = '1';
       document.getElementById('qtyInUse').value = '0';
       document.getElementById('qtyAvailable').value = '1';
       document.getElementById('status').value = 'Available';
+      
+      // Reset all "Other" input wrappers
+      document.querySelectorAll('.other-input-wrapper').forEach(wrapper => {
+        wrapper.classList.remove('show');
+      });
+      
+      // Clear all "Other" inputs
+      document.querySelectorAll('[id$="Other"]').forEach(input => {
+        if (input.tagName === 'INPUT') {
+          input.value = '';
+          input.required = false;
+        }
+      });
+    }
+
+    // Reset form when modal is closed
+    $('#addItemModal').on('hidden.bs.modal', function() {
+      resetAddItemForm();
       const submitBtn = document.getElementById('submitItemBtn');
       submitBtn.disabled = false;
       submitBtn.innerHTML = '<i class="fas fa-save"></i> Add Item';
+    });
+
+    // Setup dropdown handlers when modal is shown (after dropdowns are populated)
+    $('#addItemModal').on('shown.bs.modal', function() {
+      setupDropdownHandlers();
     });
 
     // Load inventory on page load

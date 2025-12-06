@@ -1909,7 +1909,7 @@
         if (!responseReceived) {
           responseReceived = true;
           document.body.removeChild(form);
-          alert('Delete request timed out. Please refresh to check if item was deleted.');
+          alert('Delete request timed out. Please use the Refresh button to check if item was deleted.');
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         }
@@ -1919,7 +1919,40 @@
         if (!responseReceived) {
           responseReceived = true;
           clearTimeout(timeout);
+          
+          // Try to detect errors
+          let hasError = false;
+          try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const bodyText = iframeDoc.body ? iframeDoc.body.innerText.toLowerCase() : '';
+            
+            if (bodyText.includes('403') || 
+                bodyText.includes('forbidden') || 
+                bodyText.includes('error') ||
+                bodyText.includes('permission denied')) {
+              hasError = true;
+            }
+            
+            try {
+              const iframeUrl = iframe.contentWindow.location.href;
+              if (iframeUrl.includes('error') || iframeUrl.includes('403')) {
+                hasError = true;
+              }
+            } catch (e) {
+              // Can't access iframe URL - that's okay
+            }
+          } catch (e) {
+            // Can't access iframe content - assume success
+          }
+          
           document.body.removeChild(form);
+          
+          if (hasError) {
+            alert('Error: Permission denied (403). Your Google Apps Script may need to be redeployed. The item may not have been deleted - please check your Google Sheet and use the Refresh button to sync.');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+          }
           
           setTimeout(async () => {
             $('#deleteConfirmModal').modal('hide');
@@ -1935,7 +1968,7 @@
           responseReceived = true;
           clearTimeout(timeout);
           document.body.removeChild(form);
-          alert('Error deleting item. Please try again.');
+          alert('Error deleting item. Please try again or use the Refresh button to sync data.');
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         }

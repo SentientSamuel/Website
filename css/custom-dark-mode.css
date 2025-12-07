@@ -61,8 +61,14 @@ body {
 }
 
 #mainNav {
-  background-color: transparent; /* Initially transparent */
+  background-color: #fff !important; /* Always solid background */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+body.dark-mode #mainNav {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4) !important;
 }
 
 /* On blog post pages (no masthead), always show navbar with background */
@@ -80,13 +86,20 @@ body.dark-mode:not(:has(header.masthead)) #mainNav {
 
 /* Navbar Brand (Name) Coloring Logic */
 
-/* 1. Top of page (Default): Always White (for dark masthead image) */
+/* Always use dark text (light mode) or light text (dark mode) since navbar is always solid */
 .navbar-brand {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(0, 0, 0, 0.7) !important;
     transition: color 0.3s;
 }
 .navbar-brand:hover {
-    color: #fff !important;
+    color: #f4623a !important;
+}
+
+body.dark-mode .navbar-brand {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+body.dark-mode .navbar-brand:hover {
+    color: #ff8c42 !important;
 }
 
 /* On blog post pages (no masthead), use dark text even at top */
@@ -107,31 +120,24 @@ body.dark-mode:not(:has(header.masthead)) .navbar-brand:hover {
     color: #ff8c42 !important;
 }
 
-/* 2. Scrolled State - Light Mode */
-#mainNav.navbar-scrolled .navbar-brand {
-    color: rgba(0, 0, 0, 0.7) !important;
-}
-#mainNav.navbar-scrolled .navbar-brand:hover {
-    color: #f4623a !important;
-}
-
-/* 3. Scrolled State - Dark Mode */
-body.dark-mode #mainNav.navbar-scrolled .navbar-brand {
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-body.dark-mode #mainNav.navbar-scrolled .navbar-brand:hover {
-    color: #ff8c42 !important;
-}
+/* Scrolled state styles are now the same as default since navbar is always solid */
 
 
 /* Navbar Links Coloring Logic */
 
-/* 1. Top of page: Always White */
+/* Always use dark text (light mode) or light text (dark mode) since navbar is always solid */
 .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(0, 0, 0, 0.7) !important;
 }
 .navbar-nav .nav-link:hover {
-    color: #fff !important;
+    color: #f4623a !important;
+}
+
+body.dark-mode .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+body.dark-mode .navbar-nav .nav-link:hover {
+    color: #ff8c42 !important;
 }
 
 /* On blog post pages (no masthead), use dark text even at top */
@@ -152,36 +158,10 @@ body.dark-mode:not(:has(header.masthead)) .navbar-nav .nav-link:hover {
     color: #ff8c42 !important;
 }
 
-/* 2. Scrolled State - Light Mode */
-#mainNav.navbar-scrolled .navbar-nav .nav-link {
-    color: rgba(0, 0, 0, 0.7) !important;
-}
-#mainNav.navbar-scrolled .navbar-nav .nav-link:hover {
-    color: #f4623a !important;
-}
-
-/* 3. Scrolled State - Dark Mode */
-body.dark-mode #mainNav.navbar-scrolled .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-body.dark-mode #mainNav.navbar-scrolled .navbar-nav .nav-link:hover {
-    color: #ff8c42 !important;
-}
+/* Scrolled state styles are now the same as default since navbar is always solid */
 
 
-/* Navbar Background Logic */
-
-/* Scrolled - Light Mode */
-#mainNav.navbar-scrolled {
-  background-color: #fff !important;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Scrolled - Dark Mode */
-body.dark-mode #mainNav.navbar-scrolled {
-  background-color: #1a1a1a !important;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4) !important;
-}
+/* Navbar Background Logic - Now always solid, so scrolled state is same as default */
 
 
 footer.bg-light {
@@ -191,8 +171,8 @@ footer.bg-light {
 /* Dark Mode Toggle Button */
 #darkModeToggle {
   background: none;
-  border: 2px solid rgba(255, 255, 255, 0.7); /* Default white border at top */
-  color: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(0, 0, 0, 0.7); /* Dark border for light mode */
+  color: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -205,10 +185,21 @@ footer.bg-light {
 }
 
 #darkModeToggle:hover {
-  background-color: rgba(255,255,255,0.1);
+  background-color: #f4623a;
   color: #fff;
-  border-color: #fff;
+  border-color: #f4623a;
   transform: rotate(180deg);
+}
+
+body.dark-mode #darkModeToggle {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.dark-mode #darkModeToggle:hover {
+  background-color: #ff8c42;
+  border-color: #ff8c42;
+  color: #fff;
 }
 
 /* On blog post pages (no masthead), use dark toggle button even at top */
@@ -235,27 +226,7 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
     color: #fff;
 }
 
-/* Scrolled Toggle Button - Light Mode */
-#mainNav.navbar-scrolled #darkModeToggle {
-    border-color: rgba(0, 0, 0, 0.7);
-    color: rgba(0, 0, 0, 0.7);
-}
-#mainNav.navbar-scrolled #darkModeToggle:hover {
-    background-color: #f4623a;
-    border-color: #f4623a;
-    color: #fff;
-}
-
-/* Scrolled Toggle Button - Dark Mode */
-body.dark-mode #mainNav.navbar-scrolled #darkModeToggle {
-    border-color: rgba(255, 255, 255, 0.7);
-    color: rgba(255, 255, 255, 0.9);
-}
-body.dark-mode #mainNav.navbar-scrolled #darkModeToggle:hover {
-    background-color: #ff8c42;
-    border-color: #ff8c42;
-    color: #fff;
-}
+/* Scrolled state styles are now the same as default since navbar is always solid */
 
 
 /* Skills Section Styles */
@@ -457,6 +428,14 @@ body.dark-mode .carousel-control-next-icon::after {
   
   body.dark-mode #mainNav .navbar-collapse {
     background-color: rgba(26, 26, 26, 0.98);
+  }
+}
+
+/* Reduce masthead height - make it less tall */
+@media (min-width: 992px) {
+  header.masthead {
+    height: 60vh !important; /* Reduced from 100vh */
+    min-height: 30rem !important; /* Reduced from 40rem */
   }
 }
 

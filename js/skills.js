@@ -5,7 +5,6 @@
   const skillsContainer = document.querySelector('.skills-container');
   const skillItems = document.querySelectorAll('.skill-item');
   const projectsListWrapper = document.querySelector('.projects-list-wrapper');
-  const projectsListContent = document.querySelector('.projects-list-content');
   const projectsListTitle = document.querySelector('.projects-list-title');
   const projectsListItems = document.querySelector('.projects-list-items');
 
@@ -26,7 +25,7 @@
   // Render projects list
   function renderProjects(skillName) {
     if (!projectsData || !projectsData[skillName] || projectsData[skillName].length === 0) {
-      projectsListItems.innerHTML = '<p class= text-muted>No projects available for this skill.</p>';
+      projectsListItems.innerHTML = '<p class="text-muted">No projects available for this skill.</p>';
       return;
     }
 
@@ -36,10 +35,10 @@
     projectsData[skillName].forEach(project => {
       const projectItem = document.createElement('div');
       projectItem.className = 'project-item';
-      projectItem.innerHTML = 
-        <div class=\project-item-name\></div>
-        <div class=\project-item-description\></div>
-      ;
+      projectItem.innerHTML = `
+        <div class="project-item-name">${escapeHtml(project.name)}</div>
+        <div class="project-item-description">${escapeHtml(project.description)}</div>
+      `;
       projectsListItems.appendChild(projectItem);
     });
   }
@@ -55,11 +54,6 @@
   function showProjects(skillName) {
     currentSkill = skillName;
     skillsContainer.classList.add('active');
-    if (projectsListWrapper) {
-      projectsListWrapper.style.maxHeight = '1000px';
-      projectsListWrapper.style.display = 'block';
-    }
-    if (projectsListContent) projectsListContent.style.minHeight = '400px';
     
     // Mark the clicked skill as active
     skillItems.forEach(item => {
@@ -77,11 +71,6 @@
   function hideProjects() {
     currentSkill = null;
     skillsContainer.classList.remove('active');
-    if (projectsListWrapper) {
-      projectsListWrapper.style.maxHeight = '0px';
-      projectsListWrapper.style.display = 'none';
-    }
-    if (projectsListContent) projectsListContent.style.minHeight = '0px';
     skillItems.forEach(item => item.classList.remove('active'));
   }
 
@@ -108,12 +97,11 @@
   });
 
   // Prevent closing when clicking inside the projects list
-  if (projectsListWrapper) {
-    projectsListWrapper.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-  }
+  projectsListWrapper.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
 
   // Initialize on page load
   loadProjectsData();
 })();
+

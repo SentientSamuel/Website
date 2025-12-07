@@ -362,13 +362,21 @@
       background-color: var(--card-bg);
       border-radius: 0.5rem;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin: 0 -15px; /* Extend beyond container padding */
+    }
+    
+    @media (min-width: 1200px) {
+      .inventory-table-wrapper {
+        margin: 0 -50px; /* More extension on larger screens */
+      }
     }
     
     .inventory-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin: 0;
+      table-layout: auto;
     }
     
     .inventory-table thead {
@@ -376,7 +384,7 @@
     }
     
     .inventory-table th {
-      padding: 1rem 0.75rem;
+      padding: 0.75rem 0.5rem;
       text-align: left;
       font-weight: 600;
       color: var(--text-color);
@@ -385,13 +393,49 @@
       top: 0;
       z-index: 10;
       background-color: var(--section-bg-light);
+      white-space: nowrap;
+    }
+    
+    .inventory-table th:nth-child(1) { /* Item ID */
+      width: 8%;
+    }
+    .inventory-table th:nth-child(2) { /* Name */
+      width: 15%;
+    }
+    .inventory-table th:nth-child(3) { /* Category */
+      width: 8%;
+    }
+    .inventory-table th:nth-child(4) { /* Status */
+      width: 7%;
+    }
+    .inventory-table th:nth-child(5) { /* Qty */
+      width: 8%;
+    }
+    .inventory-table th:nth-child(6) { /* Location */
+      width: 8%;
+    }
+    .inventory-table th:nth-child(7) { /* Currently Used In */
+      width: 10%;
+    }
+    .inventory-table th:nth-child(8) { /* Use Cases */
+      width: 12%;
+    }
+    .inventory-table th:nth-child(9) { /* Notes */
+      width: 10%;
+    }
+    .inventory-table th:nth-child(10) { /* AI Tags */
+      width: 12%;
+    }
+    .inventory-table th:nth-child(11) { /* Actions */
+      width: 2%;
     }
     
     .inventory-table td {
-      padding: 0.75rem;
+      padding: 0.5rem 0.4rem;
       border-bottom: 1px solid var(--border-color);
       color: var(--text-color);
       vertical-align: top;
+      word-wrap: break-word;
     }
     
     .inventory-table tbody tr {
@@ -481,9 +525,14 @@
         font-size: 0.8rem;
       }
       
+      .inventory-table-wrapper {
+        margin: 0;
+      }
+      
       .inventory-table th,
       .inventory-table td {
-        padding: 0.5rem 0.4rem;
+        padding: 0.5rem 0.3rem;
+        font-size: 0.75rem;
       }
     }
   </style>
@@ -531,7 +580,7 @@
   <section class="page-section inventory-section" id="inventory">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-12">
+        <div class="col-12">
           <div class="inventory-header text-center">
             <h1 class="mt-0">Electronics Inventory</h1>
             <hr class="divider my-4">

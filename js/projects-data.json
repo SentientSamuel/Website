@@ -1,0 +1,67 @@
+{
+  "Python": [
+    {
+      "name": "Rafia - Idle Clicker Game",
+      "description": "A cozy idle clicker game about collecting trash, built in Godot 4.x with GDScript. Features generators, prestige system, and collectible items."
+    },
+    {
+      "name": "Electronics Inventory System",
+      "description": "Web-based inventory management system for tracking electronics components, connected to Google Sheets with full CRUD operations."
+    },
+    {
+      "name": "Network Tester",
+      "description": "Ethernet network testing tool for diagnosing network connectivity and performance issues."
+    }
+  ],
+  "JavaScript": [
+    {
+      "name": "Personal Website",
+      "description": "Portfolio website with dark mode, responsive design, and interactive skills section. Built with Bootstrap and vanilla JavaScript."
+    },
+    {
+      "name": "Electronics Inventory Frontend",
+      "description": "Client-side inventory management interface with search, filtering, and CSV export functionality."
+    }
+  ],
+  "C/C++": [
+    {
+      "name": "Embedded Systems Projects",
+      "description": "Various microcontroller and embedded systems projects using C/C++ for hardware control and communication."
+    },
+    {
+      "name": "Robotics Applications",
+      "description": "Robot control systems and automation projects developed during university coursework."
+    }
+  ],
+  "Java": [
+    {
+      "name": "Object-Oriented Programming Projects",
+      "description": "University coursework projects demonstrating OOP principles, data structures, and algorithms."
+    },
+    {
+      "name": "Android Development",
+      "description": "Mobile application development projects using Java and Android SDK."
+    }
+  ],
+  "HTML/CSS": [
+    {
+      "name": "Responsive Web Design",
+      "description": "Multiple responsive websites with modern CSS, flexbox, grid layouts, and dark mode support."
+    },
+    {
+      "name": "Portfolio Website",
+      "description": "Personal portfolio site with custom styling, animations, and interactive elements."
+    }
+  ],
+  "Git/Version Control": [
+    {
+      "name": "Version Control Workflow",
+      "description": "Managing multiple projects with Git, including branching strategies, pull requests, and collaborative development."
+    },
+    {
+      "name": "Project Documentation",
+      "description": "Maintaining comprehensive documentation and changelogs across various repositories."
+    }
+  ]
+}
+

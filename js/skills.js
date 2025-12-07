@@ -23,7 +23,7 @@
   // Load projects data from JSON
   async function loadProjectsData() {
     try {
-      const response = await fetch('js/projects-data.json');
+      const response = await fetch('/js/projects-data.json');
       if (!response.ok) {
         throw new Error('Failed to load projects data');
       }

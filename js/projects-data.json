@@ -1,71 +1,123 @@
 {
   "Python": [
     {
-      "name": "Rafia - Idle Clicker Game",
-      "description": "A cozy idle clicker game about collecting trash, built in Godot 4.x with GDScript. Features generators, prestige system, and collectible items."
-    },
-    {
       "name": "Electronics Inventory System",
-      "description": "Web-based inventory management system for tracking electronics components, connected to Google Sheets with full CRUD operations."
+      "description": "Full CRUD inventory management system for electronics and microcontrollers. Uses Google Sheets as a backend, supports QR code generation, metadata tagging, and AI-friendly exports."
     },
     {
-      "name": "Network Tester",
-      "description": "Ethernet network testing tool for diagnosing network connectivity and performance issues."
+      "name": "Dartboard Scoring Algorithm",
+      "description": "Computer-vision system using OpenCV and SSIM to track dart impacts on a physical dartboard. Detects darts, computes distance/angle for scoring, and updates live totals."
     },
     {
-      "name": "Dart Algorithm",
-      "description": "Uses a camera to watch a dartboard and automatically detect where each new dart lands by comparing each frame to a reference image. It identifies the dart’s location, determines the correct score based on distance and angle, and keeps track of the player’s running total—essentially turning a normal dartboard into a smart, self-scoring system. "
+      "name": "Plinko Board Simulation",
+      "description": "Physics-based Plinko simulator with probability mapping, heatmap visualization, and interactive sliders for studying slot spacing and bin distributions."
+    },
+    {
+      "name": "Home Assistant Automation Scripts",
+      "description": "Python and YAML automations for Z-Wave/Zigbee networks, ultrasonic sensors, parking systems, kiosk dashboards, and server-side voice-command routing."
     }
   ],
+
+  "GDScript (Godot 4.x)": [
+    {
+      "name": "Rafia Idle Game Prototype",
+      "description": "Godot 4.3 implementation with UI, animation controllers, input mapping, enemy spawning using Path2D, and BigNumber resource systems."
+    },
+    {
+      "name": "Top-Down Survival Shooter",
+      "description": "Game architecture featuring player & enemy animation trees, shooting mechanics, bullet physics, spawning logic, and clean file organization."
+    },
+    {
+      "name": "Roombo",
+      "description": "Roomba Vampire Survivor-like game."
+    }
+  ],
+
   "JavaScript": [
     {
-      "name": "Personal Website",
-      "description": "Portfolio website with dark mode, responsive design, and interactive skills section. Built with Bootstrap and vanilla JavaScript."
+      "name": "Personal Portfolio Website",
+      "description": "Responsive portfolio with dark mode, interactive skill visualizations, and section animations. Built with Bootstrap and vanilla JS."
     },
     {
-      "name": "Electronics Inventory Frontend",
-      "description": "Client-side inventory management interface with search, filtering, and CSV export functionality."
+      "name": "Inventory Frontend",
+      "description": "Interface for searching, filtering, visualizing, and exporting electronics inventory data. Supports CSV import/export and metadata grouping."
+    },
+    {
+      "name": "Voice UI Architecture",
+      "description": "Front-end prototype for voice-command UI integrating with server-side Tailscale endpoints."
     }
   ],
-  "C/C++": [
+
+  "C / C++": [
     {
       "name": "Embedded Systems Projects",
-      "description": "Various microcontroller and embedded systems projects using C/C++ for hardware control and communication."
+      "description": "Microcontroller firmware for ESP32 boards, sensor drivers, SPI network modules (W5500), and real-time hardware control."
     },
     {
-      "name": "Robotics Applications",
-      "description": "Robot control systems and automation projects developed during university coursework."
+      "name": "Network Tester Device",
+      "description": "Portable ESP32 + W5500-powered diagnostics tool for ping testing, Ethernet probing, and network health monitoring."
+    },
+    {
+      "name": "Robotics Coursework",
+      "description": "Control systems and automation algorithms for university-level robotics applications."
     }
   ],
-  "Java": [
+
+  "PLC Structured Text (IEC 61131-3)": [
     {
-      "name": "Object-Oriented Programming Projects",
-      "description": "University coursework projects demonstrating OOP principles, data structures, and algorithms."
+      "name": "Conveyor Sorting System (Rail Express)",
+      "description": "PLC code for industrial conveyor sorting, sensor visualization, inter-PLC communication, and fail-safe state handling."
     },
     {
-      "name": "Android Development",
-      "description": "Mobile application development projects using Java and Android SDK."
+      "name": "Laundry Automation Control Systems",
+      "description": "Controls engineering scripts for Jensen USA large-scale laundry equipment, with advanced safety logic, sensor feedback loops, and HMI integration."
     }
   ],
-  "HTML/CSS": [
+
+  "YAML / ESPHome": [
     {
-      "name": "Responsive Web Design",
-      "description": "Multiple responsive websites with modern CSS, flexbox, grid layouts, and dark mode support."
+      "name": "Big Mouth Billy Bass Voice Assistant",
+      "description": "ESP32- and Home Assistant-controlled animatronic assistant using local LLM speech, real-time mouth syncing, and microphone input."
     },
     {
-      "name": "Portfolio Website",
-      "description": "Personal portfolio site with custom styling, animations, and interactive elements."
+      "name": "Garage Parking Sensor",
+      "description": "HC-SR04 ultrasonic sensor integrated with Z-Wave relays for automated distance detection in Home Assistant."
     }
   ],
-  "Git/Version Control": [
+
+  "HTML / CSS": [
     {
-      "name": "Version Control Workflow",
-      "description": "Managing multiple projects with Git, including branching strategies, pull requests, and collaborative development."
+      "name": "Responsive Web Projects",
+      "description": "Modern layouts using Flexbox, Grid, theme toggling, and custom animated interfaces."
     },
     {
-      "name": "Project Documentation",
-      "description": "Maintaining comprehensive documentation and changelogs across various repositories."
+      "name": "Portfolio Styling",
+      "description": "Custom animations, transitions, and UI enhancements for personal branding."
+    }
+  ],
+
+  "Bash / Shell": [
+    {
+      "name": "Server Maintenance Scripts",
+      "description": "Automation for Linux servers, Docker cleanup, Home Assistant backups, and TailScale-based remote access."
+    }
+  ],
+
+  "LaTeX": [
+    {
+      "name": "Technical Documentation",
+      "description": "Professional formatting for SOPs, scientific documentation, Overleaf projects, and proposal templates."
+    }
+  ],
+
+  "Git / Version Control": [
+    {
+      "name": "Multi-Project Repository Management",
+      "description": "Branching strategy, issue tracking, CI-friendly commit structuring, and long-term project versioning."
+    },
+    {
+      "name": "Documentation Workflow",
+      "description": "Maintaining README systems, changelogs, SOPs, and developer onboarding guides."
     }
   ]
 }
-

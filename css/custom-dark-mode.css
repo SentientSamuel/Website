@@ -309,9 +309,10 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 .projects-list-wrapper {
   width: 0;
   min-width: 0;
+  max-height: 0;
   opacity: 0;
   transform: translateX(20px);
-  transition: width 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   pointer-events: none;
   padding-left: 0;
   box-sizing: border-box;
@@ -321,6 +322,7 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 
 .skills-container.active .projects-list-wrapper {
   width: 50%;
+  max-height: none;
   padding-left: 2rem;
   opacity: 1;
   transform: translateX(0);

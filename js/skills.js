@@ -23,7 +23,9 @@
   // Load projects data from JSON
   async function loadProjectsData() {
     try {
-      const response = await fetch('/js/projects-data.json');
+      // Try absolute path first (for Jekyll), fallback to relative (for direct file access)
+      const basePath = window.location.pathname.includes('/inventory/') ? '../' : '';
+      const response = await fetch(basePath + 'js/projects-data.json');
       if (!response.ok) {
         throw new Error('Failed to load projects data');
       }

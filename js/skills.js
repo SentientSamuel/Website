@@ -89,8 +89,18 @@
     skillItems.forEach(item => item.classList.remove('active'));
   }
 
+  // Check if mobile device
+  function isMobile() {
+    return window.innerWidth <= 991.98;
+  }
+
   // Initialize event listeners
   function initEventListeners() {
+    // Only add click handlers on desktop (not mobile)
+    if (isMobile()) {
+      return; // Don't add click handlers on mobile
+    }
+    
     // Handle skill item clicks
     skillItems.forEach(item => {
       item.addEventListener('click', function(e) {

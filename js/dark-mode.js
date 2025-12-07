@@ -2,15 +2,6 @@
 (function() {
   const html = document.documentElement; // Tailwind uses html element for dark mode
   
-  // Check for saved dark mode preference
-  const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
-  
-  if (isDarkMode) {
-    html.classList.add('dark');
-    document.body.classList.add('dark-mode'); // Keep for any legacy CSS
-    updateAllIcons(true);
-  }
-
   // Function to toggle dark mode
   function toggleDarkMode() {
     html.classList.toggle('dark');
@@ -42,16 +33,31 @@
     });
   }
 
-  // Add event listeners to both toggle buttons
-  const darkModeToggle = document.getElementById('darkModeToggle');
-  const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
-  
-  if (darkModeToggle) {
-    darkModeToggle.addEventListener('click', toggleDarkMode);
+  // Wait for DOM to be ready, then attach event listeners
+  function initDarkMode() {
+    // Check for saved dark mode preference and update icons
+    const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
+    updateAllIcons(isDarkMode);
+    
+    // Add event listeners to both toggle buttons
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
+    
+    if (darkModeToggle) {
+      darkModeToggle.addEventListener('click', toggleDarkMode);
+    }
+    
+    if (darkModeToggleMobile) {
+      darkModeToggleMobile.addEventListener('click', toggleDarkMode);
+    }
   }
-  
-  if (darkModeToggleMobile) {
-    darkModeToggleMobile.addEventListener('click', toggleDarkMode);
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDarkMode);
+  } else {
+    // DOM is already ready
+    initDarkMode();
   }
 })();
 

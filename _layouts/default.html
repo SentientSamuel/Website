@@ -149,15 +149,17 @@
           {% endif %}
           {% endif %}
           
-          <div class="content text-gray-900 dark:text-gray-100 max-w-none">
-            <div class="prose-content prose prose-lg dark:prose-invert max-w-none">
-              {{ content }}
-            </div>
+          <div class="prose-content max-w-none">
+            {{ content }}
           </div>
           <style>
             /* Blog post typography styles */
             .prose-content {
-              color: inherit;
+              color: rgb(17 24 39);
+              line-height: 1.75;
+            }
+            .dark .prose-content {
+              color: rgb(243 244 246);
             }
             .prose-content h1,
             .prose-content h2,

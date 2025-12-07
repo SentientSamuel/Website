@@ -93,14 +93,17 @@
       color: rgb(156 163 175);
     }
   </style>
+  <script>
+    // Initialize dark mode immediately in head to prevent flash
+    (function() {
+      if (localStorage.getItem('darkMode') === 'enabled') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
 </head>
 
 <body id="page-top">
-  <script>
-    if (localStorage.getItem('darkMode') === 'enabled') {
-      document.body.classList.add('dark-mode');
-    }
-  </script>
 
   <!-- Navigation -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-md py-3" id="mainNav">
@@ -146,9 +149,90 @@
           {% endif %}
           {% endif %}
           
-          <div class="content prose prose-lg dark:prose-invert max-w-none">
-            {{ content }}
+          <div class="content text-gray-900 dark:text-gray-100 max-w-none">
+            <div class="prose-content prose prose-lg dark:prose-invert max-w-none">
+              {{ content }}
+            </div>
           </div>
+          <style>
+            /* Blog post typography styles */
+            .prose-content {
+              color: inherit;
+            }
+            .prose-content h1,
+            .prose-content h2,
+            .prose-content h3,
+            .prose-content h4 {
+              font-weight: 700;
+              margin-top: 2em;
+              margin-bottom: 1em;
+              color: inherit;
+            }
+            .prose-content h1 {
+              font-size: 2.25em;
+            }
+            .prose-content h2 {
+              font-size: 1.875em;
+            }
+            .prose-content h3 {
+              font-size: 1.5em;
+            }
+            .prose-content p {
+              margin-bottom: 1.25em;
+              line-height: 1.75;
+            }
+            .prose-content ul,
+            .prose-content ol {
+              margin-bottom: 1.25em;
+              padding-left: 1.625em;
+            }
+            .prose-content li {
+              margin-bottom: 0.5em;
+            }
+            .prose-content code {
+              background-color: rgba(0, 0, 0, 0.05);
+              padding: 0.2em 0.4em;
+              border-radius: 0.25em;
+              font-size: 0.9em;
+            }
+            .dark .prose-content code {
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+            .prose-content pre {
+              background-color: rgba(0, 0, 0, 0.05);
+              padding: 1em;
+              border-radius: 0.5em;
+              overflow-x: auto;
+              margin-bottom: 1.25em;
+            }
+            .dark .prose-content pre {
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+            .prose-content a {
+              color: #f4623a;
+              text-decoration: underline;
+            }
+            .dark .prose-content a {
+              color: #ff8c42;
+            }
+            .prose-content a:hover {
+              opacity: 0.8;
+            }
+            .prose-content blockquote {
+              border-left: 4px solid #f4623a;
+              padding-left: 1em;
+              margin: 1.5em 0;
+              font-style: italic;
+            }
+            .dark .prose-content blockquote {
+              border-left-color: #ff8c42;
+            }
+            .prose-content img {
+              max-width: 100%;
+              height: auto;
+              margin: 1.5em 0;
+            }
+          </style>
         </div>
       </div>
     </div>

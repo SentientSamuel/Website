@@ -95,3 +95,5 @@ Some ideas for future improvements:
 
 The inventory system has been really useful for keeping track of my electronics collection, and the CSV export feature makes it easy to query my inventory when working on new projects. It's always satisfying when a tool you built yourself becomes part of your regular workflow.
 
+
+

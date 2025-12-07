@@ -11,6 +11,10 @@
     {
       "name": "Network Tester",
       "description": "Ethernet network testing tool for diagnosing network connectivity and performance issues."
+    },
+    {
+      "name": "Dart Algorithm",
+      "description": "Uses a camera to watch a dartboard and automatically detect where each new dart lands by comparing each frame to a reference image. It identifies the dart’s location, determines the correct score based on distance and angle, and keeps track of the player’s running total—essentially turning a normal dartboard into a smart, self-scoring system. "
     }
   ],
   "JavaScript": [

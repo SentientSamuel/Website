@@ -2,11 +2,23 @@
 (function() {
   let projectsData = null;
   let currentSkill = null;
-  const skillsContainer = document.querySelector('.skills-container');
-  const skillItems = document.querySelectorAll('.skill-item');
-  const projectsListWrapper = document.querySelector('.projects-list-wrapper');
-  const projectsListTitle = document.querySelector('.projects-list-title');
-  const projectsListItems = document.querySelector('.projects-list-items');
+  let skillsContainer, skillItems, projectsListWrapper, projectsListTitle, projectsListItems;
+
+  // Initialize elements
+  function initElements() {
+    skillsContainer = document.querySelector('.skills-container');
+    skillItems = document.querySelectorAll('.skill-item');
+    projectsListWrapper = document.querySelector('.projects-list-wrapper');
+    projectsListTitle = document.querySelector('.projects-list-title');
+    projectsListItems = document.querySelector('.projects-list-items');
+
+    // Check if all required elements exist
+    if (!skillsContainer || !projectsListWrapper || !projectsListTitle || !projectsListItems) {
+      console.error('Skills section elements not found');
+      return false;
+    }
+    return true;
+  }
 
   // Load projects data from JSON
   async function loadProjectsData() {
@@ -24,8 +36,14 @@
 
   // Render projects list
   function renderProjects(skillName) {
+    if (!projectsListTitle || !projectsListItems) {
+      console.error('Projects list elements not found');
+      return;
+    }
+
     if (!projectsData || !projectsData[skillName] || projectsData[skillName].length === 0) {
       projectsListItems.innerHTML = '<p class="text-muted">No projects available for this skill.</p>';
+      projectsListTitle.textContent = skillName;
       return;
     }
 
@@ -43,15 +61,10 @@
     });
   }
 
-  // Escape HTML to prevent XSS
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
   // Show projects for a skill
   function showProjects(skillName) {
+    if (!skillsContainer) return;
+    
     currentSkill = skillName;
     skillsContainer.classList.add('active');
     
@@ -69,39 +82,70 @@
 
   // Hide projects and return to skill bars
   function hideProjects() {
+    if (!skillsContainer) return;
+    
     currentSkill = null;
     skillsContainer.classList.remove('active');
     skillItems.forEach(item => item.classList.remove('active'));
   }
 
-  // Handle skill item clicks
-  skillItems.forEach(item => {
-    item.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const skillName = this.dataset.skill;
-      
-      // If clicking the same skill, toggle off
-      if (currentSkill === skillName) {
+  // Initialize event listeners
+  function initEventListeners() {
+    // Handle skill item clicks
+    skillItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const skillName = this.dataset.skill;
+        
+        // If clicking the same skill, toggle off
+        if (currentSkill === skillName) {
+          hideProjects();
+        } else {
+          showProjects(skillName);
+        }
+      });
+    });
+
+    // Handle click outside to close
+    document.addEventListener('click', function(e) {
+      if (currentSkill && skillsContainer && !skillsContainer.contains(e.target)) {
         hideProjects();
-      } else {
-        showProjects(skillName);
       }
     });
-  });
 
-  // Handle click outside to close
-  document.addEventListener('click', function(e) {
-    if (currentSkill && !skillsContainer.contains(e.target)) {
-      hideProjects();
+    // Prevent closing when clicking inside the projects list
+    if (projectsListWrapper) {
+      projectsListWrapper.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
     }
-  });
+  }
 
-  // Prevent closing when clicking inside the projects list
-  projectsListWrapper.addEventListener('click', function(e) {
-    e.stopPropagation();
-  });
+  // Escape HTML to prevent XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 
   // Initialize on page load
-  loadProjectsData();
-})();
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        if (initElements()) {
+          loadProjectsData().then(() => {
+            initEventListeners();
+          });
+        }
+      });
+    } else {
+      if (initElements()) {
+        loadProjectsData().then(() => {
+          initEventListeners();
+        });
+      }
+    }
+  }
 
+  init();
+})();

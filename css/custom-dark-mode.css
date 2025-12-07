@@ -307,28 +307,23 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 
 /* Projects List Styles */
 .projects-list-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
+  position: relative;
   width: 0;
   min-width: 0;
-  height: 0;
-  max-height: 0;
+  overflow: hidden;
   opacity: 0;
   transform: translateX(20px);
-  transition: width 0.5s ease-in-out, height 0.5s ease-in-out, max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   pointer-events: none;
   padding-left: 0;
   box-sizing: border-box;
-  overflow: hidden;
   flex-shrink: 0;
+  contain: layout style;
+  will-change: width, opacity;
 }
 
 .skills-container.active .projects-list-wrapper {
-  position: relative;
   width: 50%;
-  height: auto;
-  max-height: 2000px;
   padding-left: 2rem;
   opacity: 1;
   transform: translateX(0);

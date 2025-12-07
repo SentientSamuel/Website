@@ -3,7 +3,9 @@
     "name": "startbootstrap-creative",
     "version": "5.1.8",
     "scripts": {
-        "start": "node_modules/.bin/gulp watch"
+        "start": "node_modules/.bin/gulp watch",
+        "build:css": "tailwindcss -i ./css/tailwind.css -o ./css/tailwind.output.css --minify",
+        "watch:css": "tailwindcss -i ./css/tailwind.css -o ./css/tailwind.output.css --watch"
     },
     "description": "Creative is a stylish one page HTML theme for Bootstrap.",
     "keywords": [

@@ -1,21 +1,29 @@
-// Dark Mode Toggle Functionality
+// Dark Mode Toggle Functionality (Tailwind CSS)
 (function() {
   const darkModeToggle = document.getElementById('darkModeToggle');
-  const body = document.body;
+  const html = document.documentElement; // Tailwind uses html element for dark mode
   const icon = darkModeToggle.querySelector('i');
 
   // Check for saved dark mode preference
   const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
   
   if (isDarkMode) {
-    body.classList.add('dark-mode');
+    html.classList.add('dark');
+    document.body.classList.add('dark-mode'); // Keep for any legacy CSS
     updateIcon(true);
   }
 
   // Toggle dark mode
   darkModeToggle.addEventListener('click', function() {
-    body.classList.toggle('dark-mode');
-    const isEnabled = body.classList.contains('dark-mode');
+    html.classList.toggle('dark');
+    const isEnabled = html.classList.contains('dark');
+    
+    // Keep body class for legacy support during transition
+    if (isEnabled) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
     
     // Save preference
     localStorage.setItem('darkMode', isEnabled ? 'enabled' : 'disabled');

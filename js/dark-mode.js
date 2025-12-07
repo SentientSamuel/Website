@@ -13,23 +13,26 @@
       e.stopPropagation();
     }
     
-    html.classList.toggle('dark');
-    const isEnabled = html.classList.contains('dark');
+    const currentlyDark = html.classList.contains('dark');
     
-    // Keep body class for legacy support during transition
-    if (isEnabled) {
-      document.body.classList.add('dark-mode');
-    } else {
+    if (currentlyDark) {
+      // Switching to light mode
+      html.classList.remove('dark');
       document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'disabled');
+      updateAllIcons(false);
+      console.log('Switched to LIGHT mode');
+    } else {
+      // Switching to dark mode
+      html.classList.add('dark');
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'enabled');
+      updateAllIcons(true);
+      console.log('Switched to DARK mode');
     }
     
-    // Save preference
-    localStorage.setItem('darkMode', isEnabled ? 'enabled' : 'disabled');
-    
-    // Update all icons
-    updateAllIcons(isEnabled);
-    
-    console.log('Dark mode toggled:', isEnabled ? 'enabled' : 'disabled');
+    // Force a repaint to ensure styles update
+    void html.offsetHeight;
   }
 
   function updateAllIcons(isDark) {

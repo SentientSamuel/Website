@@ -1,9 +1,18 @@
 // Dark Mode Toggle Functionality (Tailwind CSS)
+// This script must be loaded on all pages for dark mode to work
+
 (function() {
+  'use strict';
+  
   const html = document.documentElement; // Tailwind uses html element for dark mode
   
   // Function to toggle dark mode
-  function toggleDarkMode() {
+  function toggleDarkMode(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     html.classList.toggle('dark');
     const isEnabled = html.classList.contains('dark');
     
@@ -19,10 +28,14 @@
     
     // Update all icons
     updateAllIcons(isEnabled);
+    
+    // Dispatch custom event for any other scripts that need to know
+    window.dispatchEvent(new CustomEvent('darkModeChanged', { detail: { enabled: isEnabled } }));
   }
 
   function updateAllIcons(isDark) {
-    document.querySelectorAll('#darkModeToggle i, #darkModeToggleMobile i').forEach(icon => {
+    const icons = document.querySelectorAll('#darkModeToggle i, #darkModeToggleMobile i');
+    icons.forEach(icon => {
       if (isDark) {
         icon.classList.remove('fa-moon');
         icon.classList.add('fa-sun');
@@ -33,7 +46,7 @@
     });
   }
 
-  // Wait for DOM to be ready, then attach event listeners
+  // Initialize dark mode system
   function initDarkMode() {
     // Check for saved dark mode preference and update icons
     const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
@@ -44,11 +57,17 @@
     const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
     
     if (darkModeToggle) {
-      darkModeToggle.addEventListener('click', toggleDarkMode);
+      // Remove any existing listeners by cloning the element
+      const newToggle = darkModeToggle.cloneNode(true);
+      darkModeToggle.parentNode.replaceChild(newToggle, darkModeToggle);
+      newToggle.addEventListener('click', toggleDarkMode);
     }
     
     if (darkModeToggleMobile) {
-      darkModeToggleMobile.addEventListener('click', toggleDarkMode);
+      // Remove any existing listeners by cloning the element
+      const newToggleMobile = darkModeToggleMobile.cloneNode(true);
+      darkModeToggleMobile.parentNode.replaceChild(newToggleMobile, darkModeToggleMobile);
+      newToggleMobile.addEventListener('click', toggleDarkMode);
     }
   }
 
@@ -59,6 +78,9 @@
     // DOM is already ready
     initDarkMode();
   }
+  
+  // Also expose toggle function globally for debugging
+  window.toggleDarkMode = toggleDarkMode;
 })();
 
 // Skill Bar Animation on Scroll
@@ -101,4 +123,3 @@
     }
   }
 })();
-

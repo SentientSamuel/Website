@@ -233,7 +233,6 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 .skills-container {
   position: relative;
   overflow: visible;
-  min-height: 400px;
   display: flex;
   flex-direction: row;
   gap: 0;
@@ -333,7 +332,6 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
   border-radius: 0.5rem;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-height: 400px;
   overflow-y: auto;
 }
 

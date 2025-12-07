@@ -25,8 +25,24 @@ layout: null
   <!-- Plugin CSS -->
   <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
 
-  <!-- Tailwind CSS -->
-  <link href="css/tailwind.output.css" rel="stylesheet">
+  <!-- Tailwind CSS - Using CDN for quick preview (replace with built file later) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#f4623a',
+              dark: '#ff8c42',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <!-- <link href="css/tailwind.output.css" rel="stylesheet"> -->
 
 </head>
 

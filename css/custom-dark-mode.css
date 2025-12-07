@@ -393,17 +393,36 @@ body.dark-mode .project-item {
 
 /* Responsive Design for Skills Section */
 @media (max-width: 991.98px) {
+  .skills-container {
+    flex-direction: column;
+  }
+  
+  .skill-bars-wrapper {
+    width: 100% !important;
+    padding-right: 0;
+  }
+  
   .skills-container.active .skill-bars-wrapper {
-    transform: translateX(-100%);
+    width: 100% !important;
   }
   
   .projects-list-wrapper {
+    width: 0;
+    padding-left: 0;
+  }
+  
+  .skills-container.active .projects-list-wrapper {
     width: 100%;
+    margin-top: 2rem;
     padding-left: 0;
   }
   
   .projects-list-content {
     padding: 1.5rem;
+  }
+  
+  .skill-item {
+    margin-bottom: 1.5rem;
   }
 }
 

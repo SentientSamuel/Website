@@ -232,26 +232,26 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 /* Skills Section Styles */
 .skills-container {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   min-height: 400px;
   display: flex;
   flex-direction: row;
   gap: 0;
   align-items: flex-start;
+  width: 100%;
 }
 
 .skill-bars-wrapper {
-  transition: flex 0.5s ease-in-out, transform 0.5s ease-in-out;
-  flex: 1 1 100%;
+  transition: width 0.5s ease-in-out;
+  width: 100%;
   min-width: 0;
   padding-right: 2rem;
   box-sizing: border-box;
-  transform: translateX(0);
+  flex-shrink: 0;
 }
 
 .skills-container.active .skill-bars-wrapper {
-  flex: 0 0 50%;
-  transform: translateX(0);
+  width: 50%;
 }
 
 .skill-item {
@@ -308,19 +308,21 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 
 /* Projects List Styles */
 .projects-list-wrapper {
-  flex: 0 0 0%;
+  width: 0;
   min-width: 0;
   opacity: 0;
   transform: translateX(20px);
-  transition: flex 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   pointer-events: none;
-  padding-left: 2rem;
+  padding-left: 0;
   box-sizing: border-box;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .skills-container.active .projects-list-wrapper {
-  flex: 0 0 50%;
+  width: 50%;
+  padding-left: 2rem;
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
@@ -331,7 +333,7 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
   border-radius: 0.5rem;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  height: 100%;
+  min-height: 400px;
   overflow-y: auto;
 }
 

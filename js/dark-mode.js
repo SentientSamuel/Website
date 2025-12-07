@@ -1,20 +1,18 @@
 // Dark Mode Toggle Functionality (Tailwind CSS)
 (function() {
-  const darkModeToggle = document.getElementById('darkModeToggle');
   const html = document.documentElement; // Tailwind uses html element for dark mode
-  const icon = darkModeToggle.querySelector('i');
-
+  
   // Check for saved dark mode preference
   const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
   
   if (isDarkMode) {
     html.classList.add('dark');
     document.body.classList.add('dark-mode'); // Keep for any legacy CSS
-    updateIcon(true);
+    updateAllIcons(true);
   }
 
-  // Toggle dark mode
-  darkModeToggle.addEventListener('click', function() {
+  // Function to toggle dark mode
+  function toggleDarkMode() {
     html.classList.toggle('dark');
     const isEnabled = html.classList.contains('dark');
     
@@ -28,18 +26,32 @@
     // Save preference
     localStorage.setItem('darkMode', isEnabled ? 'enabled' : 'disabled');
     
-    // Update icon
-    updateIcon(isEnabled);
-  });
+    // Update all icons
+    updateAllIcons(isEnabled);
+  }
 
-  function updateIcon(isDark) {
-    if (isDark) {
-      icon.classList.remove('fa-moon');
-      icon.classList.add('fa-sun');
-    } else {
-      icon.classList.remove('fa-sun');
-      icon.classList.add('fa-moon');
-    }
+  function updateAllIcons(isDark) {
+    document.querySelectorAll('#darkModeToggle i, #darkModeToggleMobile i').forEach(icon => {
+      if (isDark) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+    });
+  }
+
+  // Add event listeners to both toggle buttons
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
+  
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', toggleDarkMode);
+  }
+  
+  if (darkModeToggleMobile) {
+    darkModeToggleMobile.addEventListener('click', toggleDarkMode);
   }
 })();
 

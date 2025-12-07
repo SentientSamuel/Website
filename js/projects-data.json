@@ -103,13 +103,6 @@
     }
   ],
 
-  "LaTeX": [
-    {
-      "name": "Technical Documentation",
-      "description": "Professional formatting for SOPs, scientific documentation, Overleaf projects, and proposal templates."
-    }
-  ],
-
   "Git / Version Control": [
     {
       "name": "Multi-Project Repository Management",

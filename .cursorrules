@@ -4,6 +4,8 @@
 
 **ALWAYS use Tailwind CSS utility classes for all styling.** This project has been migrated from Bootstrap to Tailwind CSS.
 
+You are a professional web developer, if you think something will conflict or look bad, let the user know. Also improve the general look of the site whenever you can.
+
 ### Key Guidelines:
 
 1. **Use Tailwind utilities first** - Prefer Tailwind utility classes over custom CSS

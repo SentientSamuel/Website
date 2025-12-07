@@ -29,8 +29,7 @@
     // Update all icons
     updateAllIcons(isEnabled);
     
-    // Dispatch custom event for any other scripts that need to know
-    window.dispatchEvent(new CustomEvent('darkModeChanged', { detail: { enabled: isEnabled } }));
+    console.log('Dark mode toggled:', isEnabled ? 'enabled' : 'disabled');
   }
 
   function updateAllIcons(isDark) {
@@ -48,26 +47,39 @@
 
   // Initialize dark mode system
   function initDarkMode() {
+    console.log('Initializing dark mode...');
+    
     // Check for saved dark mode preference and update icons
     const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
     updateAllIcons(isDarkMode);
     
-    // Add event listeners to both toggle buttons
+    // Add event listeners to both toggle buttons using event delegation
+    // This is more reliable than direct listeners
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('#darkModeToggle, #darkModeToggleMobile');
+      if (target) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDarkMode(e);
+      }
+    });
+    
+    // Also try direct listeners as backup
     const darkModeToggle = document.getElementById('darkModeToggle');
     const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
     
     if (darkModeToggle) {
-      // Remove any existing listeners by cloning the element
-      const newToggle = darkModeToggle.cloneNode(true);
-      darkModeToggle.parentNode.replaceChild(newToggle, darkModeToggle);
-      newToggle.addEventListener('click', toggleDarkMode);
+      console.log('Found darkModeToggle button');
+      darkModeToggle.addEventListener('click', toggleDarkMode);
+    } else {
+      console.warn('darkModeToggle button not found');
     }
     
     if (darkModeToggleMobile) {
-      // Remove any existing listeners by cloning the element
-      const newToggleMobile = darkModeToggleMobile.cloneNode(true);
-      darkModeToggleMobile.parentNode.replaceChild(newToggleMobile, darkModeToggleMobile);
-      newToggleMobile.addEventListener('click', toggleDarkMode);
+      console.log('Found darkModeToggleMobile button');
+      darkModeToggleMobile.addEventListener('click', toggleDarkMode);
+    } else {
+      console.warn('darkModeToggleMobile button not found');
     }
   }
 

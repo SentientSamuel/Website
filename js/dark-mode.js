@@ -61,3 +61,18 @@
   window.addEventListener('load', animateSkills);
 })();
 
+// Fix navbar visibility on blog post pages (pages without masthead)
+(function() {
+  // Check if there's no masthead element (blog post pages)
+  const hasMasthead = document.querySelector('header.masthead');
+  if (!hasMasthead) {
+    // Add class to body for CSS targeting
+    document.body.classList.add('no-masthead');
+    // Also ensure navbar has scrolled styling from the start
+    const mainNav = document.getElementById('mainNav');
+    if (mainNav) {
+      mainNav.classList.add('navbar-scrolled');
+    }
+  }
+})();
+

@@ -128,11 +128,11 @@ layout: null
   <script>
     // Initialize dark mode immediately in head to prevent flash
     // This MUST run before the page renders
+    // Note: document.body is null here, so we only set the html class
     (function() {
       try {
         if (localStorage.getItem('darkMode') === 'enabled') {
           document.documentElement.classList.add('dark');
-          document.body.classList.add('dark-mode');
         }
       } catch(e) {
         console.warn('Dark mode initialization failed:', e);

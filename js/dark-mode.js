@@ -51,6 +51,14 @@
     
     // Check for saved dark mode preference and update icons
     const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
+    
+    // Ensure body class is set (body exists now)
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    
     updateAllIcons(isDarkMode);
     
     // Add event listeners to both toggle buttons using event delegation

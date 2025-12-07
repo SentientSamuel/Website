@@ -1,0 +1,48 @@
+# Website Development Rules
+
+## CSS Framework: Tailwind CSS
+
+**ALWAYS use Tailwind CSS utility classes for all styling.** This project has been migrated from Bootstrap to Tailwind CSS.
+
+### Key Guidelines:
+
+1. **Use Tailwind utilities first** - Prefer Tailwind utility classes over custom CSS
+2. **Dark mode** - Use Tailwind's `dark:` variant for dark mode styles (e.g., `dark:bg-gray-900`)
+3. **Responsive design** - Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
+4. **Custom CSS** - Only add custom CSS in `css/tailwind.css` under `@layer components` for complex animations or styles that can't be achieved with utilities
+5. **Color scheme**:
+   - Primary: `#f4623a` (orange) - use `text-primary` or `bg-primary`
+   - Primary dark: `#ff8c42` - use `text-primary-dark` or `bg-primary-dark`
+   - Dark mode background: `bg-gray-900` or `bg-gray-800`
+   - Dark mode text: `text-gray-100` or `text-gray-200`
+
+### Examples:
+
+**Good (Tailwind):**
+```html
+<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold mb-4">Title</h2>
+</div>
+```
+
+**Bad (Custom CSS):**
+```html
+<div class="custom-card">
+  <h2 class="custom-title">Title</h2>
+</div>
+```
+
+### Dark Mode Toggle:
+- The dark mode toggle adds/removes the `dark` class on the `<html>` element
+- Use `dark:` variants for all dark mode styles
+
+### When to Use Custom CSS:
+- Complex animations that require keyframes
+- Third-party library overrides
+- Styles that truly cannot be achieved with Tailwind utilities
+
+### File Structure:
+- `css/tailwind.css` - Tailwind directives and custom component styles
+- `tailwind.config.js` - Tailwind configuration
+- All HTML files should use Tailwind classes directly
+

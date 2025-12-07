@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component styles that can't be easily done with Tailwind utilities */
+@layer components {
+  /* Skills section animations */
+  .skill-progress {
+    transition: width 1.5s ease-in-out;
+  }
+  
+  /* Project item hover effects */
+  .project-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .project-item:hover {
+    transform: translateX(5px);
+  }
+}
+

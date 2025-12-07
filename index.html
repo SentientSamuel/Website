@@ -125,7 +125,14 @@ layout: null
     }
   </style>
   <!-- <link href="css/tailwind.output.css" rel="stylesheet"> -->
-
+  <script>
+    // Initialize dark mode immediately in head to prevent flash
+    (function() {
+      if (localStorage.getItem('darkMode') === 'enabled') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
 </head>
 
 <body id="page-top">
@@ -514,13 +521,6 @@ layout: null
   </footer>
 
   <!-- Custom scripts -->
-  <script>
-    // Initialize dark mode immediately
-    if (localStorage.getItem('darkMode') === 'enabled') {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark-mode');
-    }
-  </script>
   <script src="js/dark-mode.js"></script>
   <script src="js/skills.js"></script>
   

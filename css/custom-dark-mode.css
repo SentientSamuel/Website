@@ -423,6 +423,13 @@ body.dark-mode .project-item {
   
   .skill-item {
     margin-bottom: 1.5rem;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+  
+  .skill-item:hover {
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 
@@ -566,23 +573,44 @@ body.dark-mode .carousel-control-next-icon::after {
 /* Mobile navbar - always show background for visibility */
 @media (max-width: 991.98px) {
   #mainNav {
-    background-color: rgba(0, 0, 0, 0.8) !important;
+    background-color: #fff !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   }
   
   body.dark-mode #mainNav {
-    background-color: rgba(26, 26, 26, 0.95) !important;
+    background-color: #1a1a1a !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  /* Ensure navbar text is visible on mobile */
+  #mainNav .navbar-brand {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
+  
+  body.dark-mode #mainNav .navbar-brand {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  #mainNav .navbar-nav .nav-link {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
+  
+  body.dark-mode #mainNav .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
   }
   
   /* Ensure dropdown menu is visible */
   #mainNav .navbar-collapse {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: #fff;
     padding: 1rem;
     border-radius: 0.5rem;
     margin-top: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
   
   body.dark-mode #mainNav .navbar-collapse {
-    background-color: rgba(26, 26, 26, 0.98);
+    background-color: #1a1a1a;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
   }
 }
 

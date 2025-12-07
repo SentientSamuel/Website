@@ -5,17 +5,98 @@
 /* Custom component styles that can't be easily done with Tailwind utilities */
 @layer components {
   /* Skills section animations */
-  .skill-progress {
-    transition: width 1.5s ease-in-out;
+  .skill-progress.animate {
+    width: var(--skill-width);
   }
   
-  /* Project item hover effects */
+  /* Skills container active state */
+  .skills-container.active .skill-bars-wrapper {
+    width: 50%;
+  }
+  
+  .skills-container.active .projects-list-wrapper {
+    width: 50%;
+    padding-left: 2rem;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  
+  /* Mobile responsive - stack vertically */
+  @media (max-width: 991.98px) {
+    .skills-container {
+      flex-direction: column;
+    }
+    
+    .skill-bars-wrapper {
+      width: 100% !important;
+      padding-right: 0 !important;
+    }
+    
+    .skills-container.active .skill-bars-wrapper {
+      width: 100% !important;
+    }
+    
+    .projects-list-wrapper {
+      width: 0;
+      padding-left: 0;
+    }
+    
+    .skills-container.active .projects-list-wrapper {
+      width: 100%;
+      margin-top: 2rem;
+      padding-left: 0;
+    }
+    
+    .skill-item {
+      cursor: default !important;
+      pointer-events: none !important;
+    }
+    
+    .skill-item:hover {
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+  
+  /* Project item styles */
   .project-item {
+    padding: 1.25rem;
+    background-color: rgb(248 250 252);
+    border-radius: 0.5rem;
+    border-left: 4px solid #f4623a;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .dark .project-item {
+    background-color: rgb(31 41 55);
+    border-left-color: #ff8c42;
   }
   
   .project-item:hover {
     transform: translateX(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .project-item-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgb(17 24 39);
+    margin-bottom: 0.5rem;
+  }
+  
+  .dark .project-item-name {
+    color: rgb(243 244 246);
+  }
+  
+  .project-item-description {
+    color: rgb(107 114 128);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  
+  .dark .project-item-description {
+    color: rgb(156 163 175);
   }
 }
 

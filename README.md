@@ -26,9 +26,6 @@ My portfolio website showcasing projects, skills, and blog posts. Built with Jek
 3. Serve locally: `bundle exec jekyll serve`
 4. Open `http://localhost:4000`
 
-### Production Build
-
-See [TAILWIND_SETUP.md](TAILWIND_SETUP.md) for detailed build instructions.
 
 ## Adding Projects
 

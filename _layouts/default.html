@@ -116,7 +116,7 @@
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between">
         <a class="text-xl font-semibold text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="{{ '/' | relative_url }}">Samuel Lamb</a>
-        <button class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800" type="button" onclick="document.getElementById('navbarResponsiveMobile').classList.toggle('hidden')" aria-label="Toggle navigation">
+        <button class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
           <i class="fas fa-bars"></i>
         </button>
         <div class="hidden lg:flex lg:items-center lg:space-x-1 lg:ml-auto" id="navbarResponsive">
@@ -267,6 +267,17 @@
         }
       });
     });
+    
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', function() {
+        const menu = document.getElementById('navbarResponsiveMobile');
+        if (menu) {
+          menu.classList.toggle('hidden');
+        }
+      });
+    }
   </script>
 
 </body>

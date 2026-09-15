@@ -39,12 +39,24 @@ layout: null
       width: 50% !important;
     }
     
+    .projects-list-wrapper {
+      height: 0 !important;
+      max-height: 0 !important;
+      min-height: 0 !important;
+    }
+
     .skills-container.active .projects-list-wrapper {
       width: 50% !important;
       padding-left: 2rem !important;
       opacity: 1 !important;
       transform: translateX(0) !important;
       pointer-events: auto !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+
+    .skills-container.active .projects-list-content {
+      min-height: 400px;
     }
     
     /* Mobile responsive - stack vertically */
@@ -71,6 +83,8 @@ layout: null
         width: 100% !important;
         margin-top: 2rem !important;
         padding-left: 0 !important;
+        height: auto !important;
+        max-height: none !important;
       }
       
       .skill-item {
@@ -318,7 +332,7 @@ layout: null
             </div>
             
             <div class="projects-list-wrapper relative w-0 overflow-hidden opacity-0 translate-x-5 transition-all duration-500 pointer-events-none pl-0 flex-shrink-0">
-              <div class="projects-list-content bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg overflow-y-auto min-h-[400px]">
+              <div class="projects-list-content bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg overflow-y-auto">
                 <h3 class="projects-list-title text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 pb-3 border-b-2 border-gray-300 dark:border-gray-600"></h3>
                 <div class="projects-list-items flex flex-col gap-6"></div>
               </div>

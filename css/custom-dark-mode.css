@@ -310,6 +310,9 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
   position: relative;
   width: 0;
   min-width: 0;
+  height: 0;
+  max-height: 0;
+  min-height: 0;
   overflow: hidden;
   opacity: 0;
   transform: translateX(20px);
@@ -324,10 +327,16 @@ body.dark-mode:not(:has(header.masthead)) #darkModeToggle:hover {
 
 .skills-container.active .projects-list-wrapper {
   width: 50%;
+  height: auto;
+  max-height: none;
   padding-left: 2rem;
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
+}
+
+.skills-container.active .projects-list-content {
+  min-height: 400px;
 }
 
 .projects-list-content {
@@ -415,6 +424,8 @@ body.dark-mode .project-item {
     width: 100%;
     margin-top: 2rem;
     padding-left: 0;
+    height: auto;
+    max-height: none;
   }
   
   .projects-list-content {

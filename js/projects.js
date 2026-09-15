@@ -2,6 +2,12 @@ $(document).ready(function() {
   const username = 'SentientSamuel';
   const apiUrl = `https://api.github.com/users/${username}/repos`;
 
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text == null ? '' : String(text);
+    return div.innerHTML;
+  }
+
   // Manual descriptions for repositories that don't have one on GitHub.
   // Add your repository names and descriptions here.
   const manualDescriptions = {
@@ -36,13 +42,13 @@ $(document).ready(function() {
         <div class="${itemClass}">
           <div class="card">
             <div class="card-body text-center" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
-              <h3 class="card-title">${repo.name}</h3>
-              <p class="card-text">${description}</p>
+              <h3 class="card-title">${escapeHtml(repo.name)}</h3>
+              <p class="card-text">${escapeHtml(description)}</p>
               <div class="mt-3">
-                <button class="btn btn-primary expand-btn" data-repo="${repo.name}" data-toggle="modal" data-target="#projectModal">
+                <button class="btn btn-primary expand-btn" data-repo="${escapeHtml(repo.name)}" data-toggle="modal" data-target="#projectModal">
                   ReadMe
                 </button>
-                <a href="${repo.html_url}" target="_blank" class="btn btn-outline-primary ml-2">View on GitHub</a>
+                <a href="${escapeHtml(repo.html_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary ml-2">View on GitHub</a>
               </div>
             </div>
           </div>

@@ -8,14 +8,14 @@ My portfolio website showcasing projects, skills, and blog posts. Built with Jek
 - **Dark Mode** - Toggle between light and dark themes
 - **Interactive Skills Section** - Click skills to see related projects
 - **Dev Blog** - Jekyll-powered blog for development updates
-- **Electronics Inventory** - Full CRUD inventory management system
+- **Electronics Inventory** - Public read-only inventory view (management stays on a private host)
 
 ## Tech Stack
 
 - **Jekyll** - Static site generator
 - **Tailwind CSS** - Utility-first CSS framework
 - **Vanilla JavaScript** - No framework dependencies
-- **Google Sheets API** - Backend for inventory system
+- **Static JSON / public HTTPS API** - Read-only inventory data (no private network endpoints in source)
 
 ## Quick Start
 
@@ -54,6 +54,6 @@ Projects are easily editable in `js/projects-data.json`:
 
 ## Notes
 
-- The inventory system (`inventory/index.html`) currently uses Bootstrap and works independently
+- The inventory page (`inventory/index.html`) is a public read-only viewer. Do not commit Tailscale, LAN, or other private API URLs; publish a snapshot in `inventory/items.json` or point `API_BASE_URL` at a public HTTPS origin.
 - Dark mode preference is saved in localStorage
 - All Tailwind customizations are in `css/tailwind.css`

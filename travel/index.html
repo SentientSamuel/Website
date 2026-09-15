@@ -1,0 +1,100 @@
+---
+layout: null
+permalink: /travel/
+---
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="">
+  <title>Travel - Samuel Lamb</title>
+
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css">
+  <link href="../css/tailwind.output.css" rel="stylesheet">
+  <link href="travel.css" rel="stylesheet">
+  <script>
+    (function() {
+      try {
+        if (localStorage.getItem('darkMode') === 'enabled') {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        console.warn('Dark mode initialization failed:', e);
+      }
+    })();
+  </script>
+</head>
+
+<body id="page-top" class="bg-white dark:bg-gray-900">
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-md py-3" id="mainNav">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <a class="text-xl font-semibold text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../">Samuel Lamb</a>
+        <button class="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="hidden lg:flex lg:items-center lg:space-x-1 lg:ml-auto" id="navbarResponsive">
+          <a class="px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#about">About</a>
+          <a class="px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#skills">Skills</a>
+          <a class="px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../services/">Services</a>
+          <a class="px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../devblog/">Dev Blog</a>
+          <a class="px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#contact">Contact</a>
+          <button id="darkModeToggle" class="ml-2 p-2 rounded-md border-2 border-gray-700 dark:border-gray-200 text-gray-700 dark:text-gray-200 hover:bg-primary hover:border-primary hover:text-white dark:hover:bg-primary-dark dark:hover:border-primary-dark transition-colors" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="lg:hidden hidden mt-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4" id="navbarResponsiveMobile">
+        <a class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#about">About</a>
+        <a class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#skills">Skills</a>
+        <a class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../services/">Services</a>
+        <a class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../devblog/">Dev Blog</a>
+        <a class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-dark transition-colors" href="../#contact">Contact</a>
+        <button id="darkModeToggleMobile" class="mt-2 w-full p-2 rounded-md border-2 border-gray-700 dark:border-gray-200 text-gray-700 dark:text-gray-200 hover:bg-primary hover:border-primary hover:text-white dark:hover:bg-primary-dark dark:hover:border-primary-dark transition-colors" title="Toggle Dark Mode">
+          <i class="fas fa-moon"></i> Toggle Dark Mode
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="travel-main">
+    <header class="travel-header">
+      <p class="travel-kicker">Private · Access-gated</p>
+      <h1>In the air</h1>
+      <p class="travel-lede">Live itinerary for Samuel and partner. This path is not linked from the public site. Status is mocked until the Worker secret is set.</p>
+      <p id="travelMeta" class="travel-meta" aria-live="polite">Loading status…</p>
+    </header>
+
+    <div id="travelRoot" class="travel-root">
+      <div class="travel-loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Checking flights…</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-50 dark:bg-gray-800 py-8">
+    <div class="container mx-auto px-4">
+      <div class="text-sm text-center text-gray-600 dark:text-gray-400">Samuel Thomas Lamb</div>
+    </div>
+  </footer>
+
+  <script src="../js/dark-mode.js"></script>
+  <script src="app.js"></script>
+  <script>
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', function () {
+        const menu = document.getElementById('navbarResponsiveMobile');
+        if (menu) menu.classList.toggle('hidden');
+      });
+    }
+  </script>
+</body>
+
+</html>

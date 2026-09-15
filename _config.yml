@@ -13,3 +13,15 @@ theme: jekyll-theme-minimal
 plugins:
   - jekyll-feed
 
+# Worker source is deployed with Wrangler, not GitHub Pages.
+# Listed defaults are required on Jekyll 3 (GitHub Pages): a custom exclude replaces the stock list.
+exclude:
+  - workers
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+

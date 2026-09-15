@@ -1,0 +1,8 @@
+# Public Cloudflare HTTPS apps only.
+# Do not add Tailscale, 100.x CGNAT, LAN, localhost, or http URLs.
+# Add a card by appending an entry; templates pick these up automatically.
+
+- name: Overseerr
+  description: Request movies and TV shows for the home media library.
+  url: https://requests.samuellamb.dev
+  icon: fa-film

@@ -1,0 +1,35 @@
+{%- comment -%}
+  Renders service hub cards from _data/services.yml.
+  Only https:// URLs are emitted; private/LAN/Tailscale-style hosts are skipped.
+{%- endcomment -%}
+<div class="not-prose space-y-4 text-left">
+  {% for service in site.data.services %}
+    {% assign url = service.url | default: '' | strip %}
+    {% assign url_len = url | size %}
+    {% assign url_ok = false %}
+    {% if url_len >= 12 %}
+      {% assign url_scheme = url | slice: 0, 8 %}
+      {% if url_scheme == 'https://' %}
+        {% unless url contains 'localhost' or url contains '127.0.0.1' or url contains '://100.' or url contains '://192.168.' or url contains '://10.' or url contains '.ts.net' or url contains 'tailscale' or url contains '.local' %}
+          {% assign url_ok = true %}
+        {% endunless %}
+      {% endif %}
+    {% endif %}
+    {% if url_ok %}
+    <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="block p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary-dark transition-colors shadow-md hover:shadow-lg">
+      <div class="flex items-start gap-4">
+        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex-shrink-0" aria-hidden="true">
+          <i class="fas {{ service.icon | default: 'fa-external-link-alt' }}"></i>
+        </span>
+        <div class="min-w-0">
+          <h3 class="text-2xl font-semibold text-primary dark:text-primary-dark mb-2">{{ service.name }}</h3>
+          {% if service.description %}
+          <p class="text-gray-700 dark:text-gray-300 mb-2">{{ service.description }}</p>
+          {% endif %}
+          <small class="text-primary dark:text-primary-dark font-medium">Open service &rarr;</small>
+        </div>
+      </div>
+    </a>
+    {% endif %}
+  {% endfor %}
+</div>

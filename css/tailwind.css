@@ -14,12 +14,24 @@
     width: 50%;
   }
   
+  .projects-list-wrapper {
+    height: 0;
+    max-height: 0;
+    min-height: 0;
+  }
+
   .skills-container.active .projects-list-wrapper {
     width: 50%;
     padding-left: 2rem;
     opacity: 1;
     transform: translateX(0);
     pointer-events: auto;
+    height: auto;
+    max-height: none;
+  }
+
+  .skills-container.active .projects-list-content {
+    min-height: 400px;
   }
   
   /* Mobile responsive - stack vertically */
@@ -46,6 +58,8 @@
       width: 100%;
       margin-top: 2rem;
       padding-left: 0;
+      height: auto;
+      max-height: none;
     }
     
     .skill-item {

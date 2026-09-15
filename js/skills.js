@@ -89,6 +89,13 @@
     currentSkill = null;
     skillsContainer.classList.remove('active');
     skillItems.forEach(item => item.classList.remove('active'));
+
+    if (projectsListTitle) {
+      projectsListTitle.textContent = '';
+    }
+    if (projectsListItems) {
+      projectsListItems.innerHTML = '';
+    }
   }
 
   // Check if mobile device

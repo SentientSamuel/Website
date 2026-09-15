@@ -9,6 +9,8 @@ module.exports = {
     "./_layouts/**/*.html",
     "./_posts/**/*.md",
     "./js/**/*.js",
+    "./travel/**/*.html",
+    "./travel/**/*.js",
   ],
   darkMode: 'class', // Enable class-based dark mode
   theme: {

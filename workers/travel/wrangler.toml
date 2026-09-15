@@ -1,0 +1,19 @@
+name = "travel-status"
+main = "src/index.js"
+compatibility_date = "2024-11-11"
+
+# Bind KV after: npx wrangler kv namespace create TRIPS
+# Then paste the id here. Preview id is optional for local wrangler dev.
+# [[kv_namespaces]]
+# binding = "TRIPS"
+# id = "your-kv-namespace-id"
+
+# Secrets (dashboard or CLI) — never commit values:
+#   npx wrangler secret put AVIATIONSTACK_ACCESS_KEY
+#
+# Route on the samuellamb.dev zone (Cloudflare dashboard → Workers → Triggers):
+#   samuellamb.dev/api/travel*
+
+[vars]
+# Worker still returns mock trips when the aviationstack secret is unset.
+MOCK_NOTE = "mock-until-secret"

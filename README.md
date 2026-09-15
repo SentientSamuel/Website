@@ -10,6 +10,7 @@ My portfolio website showcasing projects, skills, and blog posts. Built with Jek
 - **Dev Blog** - Jekyll-powered blog for development updates
 - **Services hub** - Public HTTPS apps (Cloudflare) listed as cards from `_data/services.yml`
 - **Electronics Inventory** - Public read-only inventory view (management stays on a private host)
+- **Travel (private)** - Access-gated `/travel` flight status page (not in public nav; mock data until the Worker secret is set)
 
 ## Tech Stack
 
@@ -67,9 +68,16 @@ Only public `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (
 - `js/projects-data.json` - Project data (easily editable)
 - `_data/services.yml` - Public service hub cards
 - `services.html` - `/services/` hub page
+- `travel/` - Private `/travel` UI (`noindex`, not in public nav)
+- `workers/travel/` - Cloudflare Worker for `GET /api/travel` (secrets + KV; not published by Jekyll)
 
 ## Notes
 
 - The inventory page (`inventory/index.html`) is a public read-only viewer. Do not commit Tailscale, LAN, or other private API URLs; publish a snapshot in `inventory/items.json` or point `API_BASE_URL` at a public HTTPS origin.
 - Dark mode preference is saved in localStorage
 - All Tailwind customizations are in `css/tailwind.css`
+- **Travel ops** (Worker secret, KV trips, Cloudflare Access on `/travel*` and `/api/travel*`): see [`workers/travel/README.md`](workers/travel/README.md). Never commit an aviationstack key.
+
+## Private travel page
+
+`/travel` is partner-gated and must not appear on the homepage or in public navigation. Locally, `jekyll serve` plus opening `/travel/` renders the arc and status chips against in-page sample data when `/api/travel` is absent.

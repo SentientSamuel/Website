@@ -8,6 +8,7 @@ My portfolio website showcasing projects, skills, and blog posts. Built with Jek
 - **Dark Mode** - Toggle between light and dark themes
 - **Interactive Skills Section** - Click skills to see related projects
 - **Dev Blog** - Jekyll-powered blog for development updates
+- **Services hub** - Public HTTPS apps (Cloudflare) listed as cards from `_data/services.yml`
 - **Electronics Inventory** - Public read-only inventory view (management stays on a private host)
 
 ## Tech Stack
@@ -42,6 +43,19 @@ Projects are easily editable in `js/projects-data.json`:
    ```
 4. Save and push - changes appear automatically!
 
+## Adding Services
+
+Public service cards are listed in `_data/services.yml`:
+
+```yaml
+- name: App Name
+  description: Short description
+  url: https://app.samuellamb.dev
+  icon: fa-link
+```
+
+Only public `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (`100.x`), localhost, or `http` URLs. Hub templates skip those.
+
 ## Project Structure
 
 - `index.html` - Main landing page
@@ -51,6 +65,8 @@ Projects are easily editable in `js/projects-data.json`:
 - `js/` - JavaScript files
 - `css/` - Stylesheets
 - `js/projects-data.json` - Project data (easily editable)
+- `_data/services.yml` - Public service hub cards
+- `services.html` - `/services/` hub page
 
 ## Notes
 

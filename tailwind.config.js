@@ -4,6 +4,8 @@ module.exports = {
     "./index.html",
     "./inventory/index.html",
     "./blog.html",
+    "./services.html",
+    "./_includes/**/*.html",
     "./_layouts/**/*.html",
     "./_posts/**/*.md",
     "./js/**/*.js",

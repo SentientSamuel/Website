@@ -4,19 +4,37 @@ Private flight-status API for the Access-gated `/travel` page. The aviationstack
 
 ## What it serves
 
-`GET /api/travel` returns sanitized **active** trips only:
+`GET /api/travel` returns sanitized trips in two lists:
 
-- `airline`, `flight_number`, optional `label`
+- `trips` — **live** window only (departure −6h through arrival +2h). These are the only rows that call aviationstack.
+- `upcoming` — saved trips before that window. Stored fields only; no provider lookup.
+
+Each card may include:
+
+- `id`, `airline`, `flight_number`, optional `label`, `date`
 - `status`, `delay_min`
-- `origin` / `dest` (IATA)
+- `origin` / `dest` (IATA, if known)
 - `dep_scheduled`, `dep_estimated`, `arr_scheduled`, `arr_estimated`
-- optional `lat` / `lon` (live position, or time-interpolated airport arc)
+- optional `lat` / `lon` on live trips
 
 It does **not** return the API key, PNR, passenger data, or the raw aviationstack payload.
 
-Active window: scheduled departure **−6 hours** through scheduled arrival **+2 hours**. Store `dep_scheduled` / `arr_scheduled` on each trip so the Worker can skip aviationstack outside that window (free tier is ~100 requests/month). Responses are cached ~3 minutes (`private, max-age=180` plus KV cache of provider lookups).
+Add a trip from the Access-gated page:
 
-With **no secret** (or empty KV), the Worker returns **mock/sample** trip data so the UI can be developed.
+```
+POST /api/travel/trips
+{ "flight": "DL241", "date": "2026-10-03", "origin": "ATL", "dest": "BOS", "label": "Home" }
+```
+
+`origin`, `dest`, and `label` are optional. The Worker stores what you typed and waits until the live window to query aviationstack.
+
+```
+DELETE /api/travel/trips/:id
+```
+
+With **no KV binding**, GET still returns mock/sample data so the UI can be developed. POST/DELETE require the `TRIPS` KV namespace.
+
+Responses for GET are cached ~3 minutes (`private, max-age=180` plus KV cache of provider lookups). Mutations are `no-store`.
 
 ## Deploy
 
@@ -70,16 +88,15 @@ Fields per trip:
 
 | Field | Required | Notes |
 | --- | --- | --- |
-| `airline` | yes | `DL` or `AA` (IATA) |
-| `flight_number` | yes | e.g. `241` |
-| `date` | yes | `YYYY-MM-DD` (aviationstack `flight_date`) |
-| `origin` | yes | IATA |
-| `dest` | yes | IATA |
+| `airline` / `flight_number` or `flight` | yes | `DL` + `241`, or `DL241` |
+| `date` | yes | `YYYY-MM-DD` (aviationstack `flight_date` once live) |
+| `origin` | no | IATA; helps disambiguate the same flight number |
+| `dest` | no | IATA |
 | `label` | no | Display-only |
-| `dep_scheduled` | strongly recommended | ISO-8601 UTC, used for the T−6h / T+2h window |
-| `arr_scheduled` | strongly recommended | ISO-8601 UTC |
+| `dep_scheduled` | optional | ISO-8601 UTC; tightens the live window if you have it |
+| `arr_scheduled` | optional | ISO-8601 UTC |
 
-No airline OAuth. Edit KV when plans change.
+Prefer the `/travel` form over hand-editing KV. The form writes the same `trips` key.
 
 ## Cloudflare Access (partner-gated)
 
@@ -99,8 +116,8 @@ Protect the page **and** the API so itineraries are not public. In Zero Trust �
 - Do not put those addresses in this repository if you do not want them public; configure them in the Access dashboard
 - Identity: whatever you already use (OTP, Google, GitHub, etc.). This repo does not invent or store Access credentials.
 
-Public nav and the homepage must **not** link here. After Access is on, you can bookmark `https://samuellamb.dev/travel/` privately.
+The Services hub may link here. Access still blocks anyone who is not on the allow-list; they see the Cloudflare login, not itineraries. After Access is on, `https://samuellamb.dev/travel/` is the bookmark.
 
 ## Local UI without the Worker
 
-`travel/app.js` falls back to in-page sample data if `/api/travel` is missing (plain `jekyll serve`). That is enough to develop the arc + chips. Point the page at a real Worker by serving through Cloudflare or `wrangler dev` plus a local reverse proxy if you need the live path.
+`travel/app.js` falls back to in-page sample live + upcoming cards if `/api/travel` is missing (plain `jekyll serve`). Adding or removing trips needs `wrangler dev` (or the deployed Worker) with KV.

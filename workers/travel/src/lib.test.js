@@ -1,12 +1,18 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  buildStoredTrip,
   isTripActive,
+  isTripUpcoming,
+  makeTripId,
   normalizeStoredTrips,
+  parseFlightInput,
+  removeTrip,
   sampleTrips,
   sanitizeTrip,
   selectProviderFlight,
   timeProgress,
+  upsertTrip,
 } from './lib.js';
 
 describe('active window', () => {
@@ -71,11 +77,13 @@ describe('sanitizeTrip', () => {
       'airline',
       'arr_estimated',
       'arr_scheduled',
+      'date',
       'delay_min',
       'dep_estimated',
       'dep_scheduled',
       'dest',
       'flight_number',
+      'id',
       'label',
       'lat',
       'lon',
@@ -123,5 +131,52 @@ describe('provider pick + store shape', () => {
     assert.equal(normalizeStoredTrips([{ airline: 'AA' }]).length, 1);
     assert.equal(normalizeStoredTrips({ trips: [{ airline: 'DL' }] }).length, 1);
     assert.deepEqual(normalizeStoredTrips(null), []);
+  });
+});
+
+describe('flight input', () => {
+  it('parses DL241, DL 241, and split fields', () => {
+    assert.deepEqual(parseFlightInput('', '', 'DL241'), { airline: 'DL', flight_number: '241' });
+    assert.deepEqual(parseFlightInput('', '', 'dl 241'), { airline: 'DL', flight_number: '241' });
+    assert.deepEqual(parseFlightInput('AA', '100', ''), { airline: 'AA', flight_number: '100' });
+    assert.equal(parseFlightInput('', '', 'DELTA241'), null);
+  });
+});
+
+describe('upcoming vs live', () => {
+  it('keeps a date-only trip upcoming until T-6h', () => {
+    const now = Date.parse('2026-09-15T18:00:00.000Z');
+    const trip = { date: '2026-09-20', airline: 'DL', flight_number: '88' };
+    assert.equal(isTripUpcoming(trip, now), true);
+    assert.equal(isTripActive(trip, now), false);
+    assert.equal(isTripUpcoming(trip, Date.parse('2026-09-19T18:00:00.000Z')), false);
+    assert.equal(isTripActive(trip, Date.parse('2026-09-20T12:00:00.000Z')), true);
+  });
+});
+
+describe('stored trips', () => {
+  it('builds a KV trip from the add-flight form', () => {
+    const now = Date.parse('2026-09-15T18:00:00.000Z');
+    const built = buildStoredTrip(
+      { flight: 'DL 88', date: '2026-10-03', origin: 'atl', dest: 'SEA', label: 'Home' },
+      now
+    );
+    assert.equal(built.error, undefined);
+    assert.equal(built.trip.airline, 'DL');
+    assert.equal(built.trip.flight_number, '88');
+    assert.equal(built.trip.origin, 'ATL');
+    assert.equal(built.trip.dest, 'SEA');
+    assert.equal(built.trip.id, makeTripId('DL', '88', '2026-10-03'));
+  });
+
+  it('rejects junk airport codes and replaces duplicates', () => {
+    const now = Date.parse('2026-09-15T18:00:00.000Z');
+    assert.equal(buildStoredTrip({ flight: 'DL88', date: '2026-10-03', origin: 'ATLANTA' }, now).error.includes('Origin'), true);
+    const first = buildStoredTrip({ flight: 'DL88', date: '2026-10-03', label: 'A' }, now).trip;
+    const second = buildStoredTrip({ flight: 'DL88', date: '2026-10-03', label: 'B' }, now).trip;
+    const store = upsertTrip([first], second);
+    assert.equal(store.length, 1);
+    assert.equal(store[0].label, 'B');
+    assert.equal(removeTrip(store, first.id).length, 0);
   });
 });

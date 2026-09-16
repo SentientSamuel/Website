@@ -3,9 +3,14 @@
 
   const POLL_MS = 4 * 60 * 1000;
   const API_PATH = '/api/travel';
+  const TRIPS_PATH = '/api/travel/trips';
 
-  const root = document.getElementById('travelRoot');
+  const liveRoot = document.getElementById('liveRoot');
+  const upcomingRoot = document.getElementById('upcomingRoot');
   const meta = document.getElementById('travelMeta');
+  const form = document.getElementById('addTripForm');
+  const formAlert = document.getElementById('tripFormAlert');
+  const addBtn = document.getElementById('addTripBtn');
   let pollTimer = null;
 
   function escapeHtml(text) {
@@ -35,6 +40,20 @@
     }).format(new Date(ms));
   }
 
+  function formatDay(value) {
+    if (!value) return 'Date TBD';
+    const isoDate = /^\d{4}-\d{2}-\d{2}$/.test(value);
+    const ms = isoDate ? Date.parse(value + 'T12:00:00Z') : parseTime(value);
+    if (!ms) return escapeHtml(String(value));
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: isoDate ? 'UTC' : undefined,
+    }).format(new Date(ms));
+  }
+
   function formatEta(trip, now) {
     const arr = parseTime(trip.arr_estimated) || parseTime(trip.arr_scheduled);
     if (!arr) return 'ETA unknown';
@@ -57,13 +76,21 @@
     return clamp((now - dep) / (arr - dep), 0, 1);
   }
 
+  function upcomingDate() {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() + 5);
+    return d.toISOString().slice(0, 10);
+  }
+
   function samplePayload() {
     const now = Date.now();
+    const date = upcomingDate();
     return {
       source: 'mock',
       fetched_at: new Date(now).toISOString(),
       trips: [
         {
+          id: 'dl-241-sample',
           airline: 'DL',
           flight_number: '241',
           label: 'Sample (local mock)',
@@ -79,6 +106,18 @@
           lon: -77.7,
         },
       ],
+      upcoming: [
+        {
+          id: 'aa-100-' + date,
+          airline: 'AA',
+          flight_number: '100',
+          date: date,
+          origin: 'JFK',
+          dest: 'LAX',
+          status: 'scheduled',
+          label: 'Sample upcoming',
+        },
+      ],
     };
   }
 
@@ -91,20 +130,34 @@
     return '<span class="travel-chip chip-delay">+' + escapeHtml(String(mins)) + ' min</span>';
   }
 
-  function cardHtml(trip, now) {
+  function removeButton(trip) {
+    if (!trip.id) return '';
+    return (
+      '<button type="button" class="travel-remove js-remove" data-id="' +
+      escapeHtml(trip.id) +
+      '" aria-label="Remove ' +
+      escapeHtml((trip.airline || '') + ' ' + (trip.flight_number || '')) +
+      '">Remove</button>'
+    );
+  }
+
+  function liveCardHtml(trip, now) {
     const t = progressFor(trip, now);
     const flight = escapeHtml((trip.airline || '') + ' ' + (trip.flight_number || ''));
     const origin = escapeHtml(trip.origin || '—');
     const dest = escapeHtml(trip.dest || '—');
     const status = escapeHtml(trip.status || 'scheduled');
     const label = trip.label ? '<span class="travel-label">' + escapeHtml(trip.label) + '</span>' : '';
-    const pathId = 'route-' + flight.replace(/\s+/g, '').toLowerCase() + '-' + origin + dest;
+    const pathId = 'route-' + escapeHtml(String(trip.id || flight + origin + dest).replace(/[^a-z0-9-]+/gi, '').toLowerCase());
 
     return (
       '<article class="travel-card">' +
         '<div class="travel-card-head">' +
           '<div class="travel-flight">' + flight + '</div>' +
-          label +
+          '<div class="travel-card-tools">' +
+            label +
+            removeButton(trip) +
+          '</div>' +
         '</div>' +
         '<div class="travel-chips">' +
           '<span class="travel-chip chip-status-' + escapeHtml(trip.status || 'scheduled') + '">' + status + '</span>' +
@@ -133,7 +186,44 @@
     );
   }
 
+  function upcomingCardHtml(trip) {
+    const flight = escapeHtml((trip.airline || '') + ' ' + (trip.flight_number || ''));
+    const origin = trip.origin ? escapeHtml(trip.origin) : '';
+    const dest = trip.dest ? escapeHtml(trip.dest) : '';
+    const route = origin || dest ? (origin || '—') + ' → ' + (dest || '—') : 'Route TBD until closer to departure';
+    const label = trip.label ? '<span class="travel-label">' + escapeHtml(trip.label) + '</span>' : '';
+    const when = formatDay(trip.date || trip.dep_scheduled);
+
+    return (
+      '<article class="travel-card travel-card-upcoming">' +
+        '<div class="travel-card-head">' +
+          '<div class="travel-flight">' + flight + '</div>' +
+          '<div class="travel-card-tools">' +
+            label +
+            removeButton(trip) +
+          '</div>' +
+        '</div>' +
+        '<div class="travel-chips">' +
+          '<span class="travel-chip chip-status-scheduled">upcoming</span>' +
+          '<span class="travel-chip chip-eta">' + escapeHtml(when) + '</span>' +
+          '<span class="travel-chip chip-route">' + route + '</span>' +
+        '</div>' +
+        '<p class="travel-upcoming-note">Saved locally. Aviationstack is queried only in the T−6h to T+2h window.</p>' +
+      '</article>'
+    );
+  }
+
+  function emptyHtml(icon, message) {
+    return (
+      '<div class="travel-empty">' +
+        '<i class="fas ' + icon + '"></i>' +
+        '<div>' + message + '</div>' +
+      '</div>'
+    );
+  }
+
   function placePlanes(container) {
+    if (!container) return;
     container.querySelectorAll('.js-plane').forEach(function (g) {
       const svg = g.closest('svg');
       const path = svg && svg.querySelector('#' + CSS.escape(g.getAttribute('data-path')));
@@ -147,32 +237,54 @@
     });
   }
 
+  function bindRemoves(container) {
+    if (!container) return;
+    container.querySelectorAll('.js-remove').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-id');
+        if (!id) return;
+        btn.disabled = true;
+        deleteTrip(id).finally(function () {
+          btn.disabled = false;
+        });
+      });
+    });
+  }
+
   function render(payload, note) {
     const now = Date.now();
     const trips = payload && Array.isArray(payload.trips) ? payload.trips : [];
+    const upcoming = payload && Array.isArray(payload.upcoming) ? payload.upcoming : [];
+
     if (meta) {
       const source = payload && payload.source ? payload.source : 'unknown';
       const fetched = payload && payload.fetched_at ? formatClock(payload.fetched_at) : '';
       meta.textContent = (note || ('Source: ' + source)) + (fetched ? ' · ' + fetched : '');
     }
 
-    if (!root) return;
-
-    if (!trips.length) {
-      root.innerHTML =
-        '<div class="travel-empty">' +
-          '<i class="fas fa-plane-slash"></i>' +
-          '<div>No active trips in the T−6h to T+2h window.</div>' +
-        '</div>';
-      stopPolling();
-      return;
+    if (liveRoot) {
+      if (!trips.length) {
+        liveRoot.innerHTML = emptyHtml('fa-plane', 'No flights in the live window yet.');
+      } else {
+        liveRoot.innerHTML = trips.map(function (trip) {
+          return liveCardHtml(trip, now);
+        }).join('');
+        placePlanes(liveRoot);
+      }
+      bindRemoves(liveRoot);
     }
 
-    root.innerHTML = trips.map(function (trip) {
-      return cardHtml(trip, now);
-    }).join('');
-    placePlanes(root);
-    startPolling();
+    if (upcomingRoot) {
+      if (!upcoming.length) {
+        upcomingRoot.innerHTML = emptyHtml('fa-calendar-alt', 'No upcoming trips saved. Add a flight number and date above.');
+      } else {
+        upcomingRoot.innerHTML = upcoming.map(upcomingCardHtml).join('');
+      }
+      bindRemoves(upcomingRoot);
+    }
+
+    if (trips.length) startPolling();
+    else stopPolling();
   }
 
   function startPolling() {
@@ -186,6 +298,18 @@
     pollTimer = null;
   }
 
+  function showFormAlert(message, isError) {
+    if (!formAlert) return;
+    if (!message) {
+      formAlert.hidden = true;
+      formAlert.textContent = '';
+      return;
+    }
+    formAlert.hidden = false;
+    formAlert.textContent = message;
+    formAlert.classList.toggle('is-error', Boolean(isError));
+  }
+
   function loadStatus() {
     return fetch(API_PATH, { credentials: 'same-origin', headers: { accept: 'application/json' } })
       .then(function (res) {
@@ -196,10 +320,74 @@
         render(data);
       })
       .catch(function () {
-        const sample = samplePayload();
-        render(sample, 'Sample data (Worker unreachable — mock mode)');
+        render(samplePayload(), 'Sample data (Worker unreachable — mock mode)');
       });
   }
+
+  function deleteTrip(id) {
+    return fetch(TRIPS_PATH + '/' + encodeURIComponent(id), {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('delete ' + res.status);
+        return loadStatus();
+      })
+      .catch(function () {
+        showFormAlert('Could not remove that trip. Is the Worker and KV bound?', true);
+      });
+  }
+
+  function submitTrip(event) {
+    event.preventDefault();
+    const flight = document.getElementById('tripFlight');
+    const date = document.getElementById('tripDate');
+    const origin = document.getElementById('tripOrigin');
+    const dest = document.getElementById('tripDest');
+    const label = document.getElementById('tripLabel');
+    const payload = {
+      flight: flight ? flight.value.trim() : '',
+      date: date ? date.value : '',
+      origin: origin ? origin.value.trim().toUpperCase() : '',
+      dest: dest ? dest.value.trim().toUpperCase() : '',
+      label: label ? label.value.trim() : '',
+    };
+
+    if (addBtn) addBtn.disabled = true;
+    showFormAlert('Saving trip…', false);
+
+    fetch(TRIPS_PATH, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          return { ok: res.ok, status: res.status, data: data };
+        }).catch(function () {
+          return { ok: res.ok, status: res.status, data: {} };
+        });
+      })
+      .then(function (result) {
+        if (!result.ok) {
+          const message = (result.data && (result.data.message || result.data.error)) || 'Could not save that trip.';
+          showFormAlert(message, true);
+          return;
+        }
+        if (form) form.reset();
+        showFormAlert('Trip saved. Live status will start 6 hours before departure.', false);
+        return loadStatus();
+      })
+      .catch(function () {
+        showFormAlert('Worker unreachable. Trips are stored in KV, so local Jekyll-only mode cannot add flights.', true);
+      })
+      .then(function () {
+        if (addBtn) addBtn.disabled = false;
+      });
+  }
+
+  if (form) form.addEventListener('submit', submitTrip);
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadStatus);

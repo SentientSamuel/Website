@@ -1,14 +1,13 @@
 {
   "trips": [
     {
+      "id": "dl-241-2026-10-03",
       "airline": "DL",
       "flight_number": "241",
-      "date": "2026-09-16",
+      "date": "2026-10-03",
       "origin": "ATL",
       "dest": "BOS",
-      "label": "Optional display name",
-      "dep_scheduled": "2026-09-16T16:00:00.000Z",
-      "arr_scheduled": "2026-09-16T18:30:00.000Z"
+      "label": "Optional display name"
     }
   ]
 }

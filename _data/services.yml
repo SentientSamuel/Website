@@ -1,8 +1,13 @@
-# Public Cloudflare HTTPS apps only.
+# Cloudflare HTTPS apps only.
+# Access-gated apps (Travel) are fine here; the card is visible, the page is not.
 # Do not add Tailscale, 100.x CGNAT, LAN, localhost, or http URLs.
-# Add a card by appending an entry; templates pick these up automatically.
 
 - name: Overseerr
   description: Request movies and TV shows for the home media library.
   url: https://requests.samuellamb.dev
   icon: fa-film
+
+- name: Travel
+  description: Private flight board. Cloudflare Access required.
+  url: https://samuellamb.dev/travel/
+  icon: fa-plane

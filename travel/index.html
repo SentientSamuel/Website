@@ -65,16 +65,60 @@ permalink: /travel/
   <main class="travel-main">
     <header class="travel-header">
       <p class="travel-kicker">Private · Access-gated</p>
-      <h1>In the air</h1>
+      <h1>Travel</h1>
       <p id="travelMeta" class="travel-meta" aria-live="polite">Loading status…</p>
     </header>
 
-    <div id="travelRoot" class="travel-root">
-      <div class="travel-loading">
-        <i class="fas fa-spinner fa-spin"></i>
-        <span>Checking flights…</span>
+    <section class="travel-panel" aria-labelledby="addTripHeading">
+      <h2 id="addTripHeading">Add a flight</h2>
+      <p class="travel-lede">Save the flight number and date now. Live aviationstack status starts 6 hours before departure.</p>
+      <form id="addTripForm" class="travel-form">
+        <label>
+          Flight
+          <input id="tripFlight" name="flight" type="text" required autocomplete="off" placeholder="DL241" maxlength="8">
+        </label>
+        <label>
+          Date
+          <input id="tripDate" name="date" type="date" required>
+        </label>
+        <label>
+          From
+          <input id="tripOrigin" name="origin" type="text" autocomplete="off" placeholder="ATL" maxlength="3">
+        </label>
+        <label>
+          To
+          <input id="tripDest" name="dest" type="text" autocomplete="off" placeholder="BOS" maxlength="3">
+        </label>
+        <label class="travel-form-wide">
+          Label
+          <input id="tripLabel" name="label" type="text" autocomplete="off" placeholder="Optional, e.g. Home" maxlength="80">
+        </label>
+        <div class="travel-form-actions">
+          <button type="submit" id="addTripBtn" class="travel-submit">Add trip</button>
+        </div>
+      </form>
+      <p id="tripFormAlert" class="travel-form-alert" role="status" hidden></p>
+    </section>
+
+    <section class="travel-panel" aria-labelledby="liveHeading">
+      <h2 id="liveHeading">In the air</h2>
+      <div id="liveRoot" class="travel-root">
+        <div class="travel-loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Checking flights…</span>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="travel-panel" aria-labelledby="upcomingHeading">
+      <h2 id="upcomingHeading">Upcoming</h2>
+      <div id="upcomingRoot" class="travel-root">
+        <div class="travel-loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Loading trips…</span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="bg-gray-50 dark:bg-gray-800 py-8">

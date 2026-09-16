@@ -7,6 +7,7 @@ export const ACTIVE_BEFORE_MS = 6 * 60 * 60 * 1000;
 export const ACTIVE_AFTER_MS = 2 * 60 * 60 * 1000;
 export const CACHE_TTL_SECONDS = 180;
 export const FALLBACK_BLOCK_MS = 8 * 60 * 60 * 1000;
+export const MAX_STORED_TRIPS = 40;
 
 /** Approximate airport coordinates used only to interpolate a marker when live lat/lon is absent. */
 export const AIRPORT_COORDS = {
@@ -178,8 +179,10 @@ export function sanitizeTrip(trip, providerRow, nowMs) {
   const interpolated = interpolateCoords(origin, dest, progress);
 
   const out = {
+    id: trip.id || makeTripId(airline, flightNumber, trip.date),
     airline,
     flight_number: flightNumber,
+    date: trip.date ? String(trip.date) : null,
     origin,
     dest,
     status,
@@ -199,11 +202,14 @@ export function sanitizeTrip(trip, providerRow, nowMs) {
 
 export function sampleTrips(nowMs) {
   const now = Number.isFinite(nowMs) ? nowMs : Date.now();
+  const liveDate = iso(now).slice(0, 10);
+  const upcomingDate = iso(now + 5 * 24 * 60 * 60 * 1000).slice(0, 10);
   return [
     {
+      id: makeTripId('DL', '241', liveDate),
       airline: 'DL',
       flight_number: '241',
-      date: iso(now).slice(0, 10),
+      date: liveDate,
       origin: 'ATL',
       dest: 'BOS',
       label: 'Sample (mock)',
@@ -213,6 +219,17 @@ export function sampleTrips(nowMs) {
       delay_min: 14,
     },
     {
+      id: makeTripId('AA', '100', upcomingDate),
+      airline: 'AA',
+      flight_number: '100',
+      date: upcomingDate,
+      origin: 'JFK',
+      dest: 'LAX',
+      label: 'Sample upcoming',
+      status: 'scheduled',
+    },
+    {
+      id: makeTripId('AA', '100', '2019-01-01'),
       airline: 'AA',
       flight_number: '100',
       date: '2019-01-01',
@@ -247,10 +264,123 @@ export function selectProviderFlight(data, trip) {
   return match || rows[0];
 }
 
-export function buildPublicPayload(trips, source, nowMs) {
+export function buildPublicPayload(activeTrips, upcomingTrips, source, nowMs) {
   return {
-    trips: trips,
+    trips: activeTrips || [],
+    upcoming: upcomingTrips || [],
     source: source,
     fetched_at: iso(nowMs),
   };
+}
+
+export function makeTripId(airline, flightNumber, date) {
+  return [airline || '', flightNumber || '', date || '']
+    .map(function (part) {
+      return String(part).trim().toLowerCase();
+    })
+    .join('-');
+}
+
+export function parseFlightInput(rawAirline, rawNumber, rawCombined) {
+  const combined = String(rawCombined || '').trim().toUpperCase().replace(/[\s-]+/g, '');
+  if (combined) {
+    const match = combined.match(/^([A-Z]{2})(\d{1,4}[A-Z]?)$/);
+    if (match) {
+      return { airline: match[1], flight_number: match[2] };
+    }
+  }
+  const airline = String(rawAirline || '').trim().toUpperCase();
+  const number = String(rawNumber || '').trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(airline) && /^\d{1,4}[A-Z]?$/.test(number)) {
+    return { airline: airline, flight_number: number };
+  }
+  return null;
+}
+
+export function parseIataAirport(raw) {
+  const value = String(raw || '').trim().toUpperCase();
+  if (!value) return '';
+  if (!/^[A-Z]{3}$/.test(value)) return null;
+  return value;
+}
+
+export function parseFlightDate(raw) {
+  const value = String(raw || '').trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const ms = Date.parse(value + 'T00:00:00Z');
+  if (!Number.isFinite(ms)) return null;
+  return value;
+}
+
+export function tripPhase(trip, nowMs) {
+  const window = scheduledWindow(trip);
+  if (!window) return 'unknown';
+  if (nowMs < window.start) return 'upcoming';
+  if (nowMs > window.end) return 'past';
+  return 'live';
+}
+
+export function isTripUpcoming(trip, nowMs) {
+  return tripPhase(trip, nowMs) === 'upcoming';
+}
+
+export function buildStoredTrip(input, nowMs) {
+  const parsed = parseFlightInput(input && input.airline, input && input.flight_number, input && input.flight);
+  if (!parsed) {
+    return { error: 'Enter a flight like DL241 or DL 241.' };
+  }
+  const date = parseFlightDate(input && input.date);
+  if (!date) {
+    return { error: 'Enter a departure date as YYYY-MM-DD.' };
+  }
+  const origin = parseIataAirport(input && input.origin);
+  if (origin === null) {
+    return { error: 'Origin must be a 3-letter airport code.' };
+  }
+  const dest = parseIataAirport(input && input.dest);
+  if (dest === null) {
+    return { error: 'Destination must be a 3-letter airport code.' };
+  }
+
+  const now = Number.isFinite(nowMs) ? nowMs : Date.now();
+  const day = Date.parse(date + 'T00:00:00Z');
+  if (day < now - 2 * 24 * 60 * 60 * 1000) {
+    return { error: 'Date is too far in the past.' };
+  }
+  if (day > now + 366 * 24 * 60 * 60 * 1000) {
+    return { error: 'Date is too far in the future.' };
+  }
+
+  const trip = {
+    id: makeTripId(parsed.airline, parsed.flight_number, date),
+    airline: parsed.airline,
+    flight_number: parsed.flight_number,
+    date: date,
+    status: 'scheduled',
+  };
+  if (origin) trip.origin = origin;
+  if (dest) trip.dest = dest;
+  const label = String((input && input.label) || '').trim().slice(0, 80);
+  if (label) trip.label = label;
+  return { trip: trip };
+}
+
+export function upsertTrip(trips, trip) {
+  const next = (trips || []).filter(function (existing) {
+    const existingId = existing.id || makeTripId(existing.airline, existing.flight_number, existing.date);
+    return existingId !== trip.id;
+  });
+  next.push(trip);
+  next.sort(function (a, b) {
+    return String(a.date || '').localeCompare(String(b.date || ''));
+  });
+  return next;
+}
+
+export function removeTrip(trips, id) {
+  const target = String(id || '');
+  return (trips || []).filter(function (existing) {
+    const existingId = existing.id || makeTripId(existing.airline, existing.flight_number, existing.date);
+    return existingId !== target;
+  });
 }

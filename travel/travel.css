@@ -287,8 +287,145 @@
   color: rgb(243 244 246);
 }
 
+.travel-panel {
+  margin-top: 2.25rem;
+}
+
+.travel-panel h2 {
+  font-family: "Merriweather Sans", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: rgb(17 24 39);
+  margin: 0 0 0.75rem;
+}
+
+.dark .travel-panel h2 {
+  color: rgb(243 244 246);
+}
+
+.travel-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+.travel-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgb(75 85 99);
+}
+
+.dark .travel-form label {
+  color: rgb(156 163 175);
+}
+
+.travel-form input {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(203 213 225);
+  background: rgb(255 255 255);
+  color: rgb(17 24 39);
+  font-size: 1rem;
+}
+
+.dark .travel-form input {
+  border-color: rgb(75 85 99);
+  background: rgb(17 24 39);
+  color: rgb(243 244 246);
+}
+
+.travel-form input:focus {
+  outline: none;
+  border-color: #f4623a;
+  box-shadow: 0 0 0 3px rgba(244, 98, 58, 0.2);
+}
+
+.travel-form-wide,
+.travel-form-actions {
+  grid-column: 1 / -1;
+}
+
+.travel-submit,
+.travel-remove {
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.travel-submit {
+  padding: 0.7rem 1.1rem;
+  background: #f4623a;
+  color: #fff;
+}
+
+.travel-submit:hover,
+.travel-submit:focus {
+  background: #e0552e;
+}
+
+.travel-submit:disabled,
+.travel-remove:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark .travel-submit {
+  background: #ff8c42;
+  color: rgb(17 24 39);
+}
+
+.travel-form-alert {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: rgb(21 128 61);
+}
+
+.travel-form-alert.is-error {
+  color: #b91c1c;
+}
+
+.dark .travel-form-alert.is-error {
+  color: #f87171;
+}
+
+.travel-card-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.travel-remove {
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: rgb(185 28 28);
+  border: 1px solid rgb(254 202 202);
+  font-size: 0.75rem;
+}
+
+.dark .travel-remove {
+  color: #f87171;
+  border-color: rgb(127 29 29);
+}
+
+.travel-upcoming-note {
+  margin: 0.85rem 0 0;
+  font-size: 0.85rem;
+  color: rgb(107 114 128);
+  line-height: 1.5;
+}
+
+.dark .travel-upcoming-note {
+  color: rgb(156 163 175);
+}
+
 @media (max-width: 640px) {
-  .travel-times {
+  .travel-times,
+  .travel-form {
     grid-template-columns: 1fr;
   }
 

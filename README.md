@@ -8,9 +8,9 @@ My portfolio website showcasing projects, skills, and blog posts. Built with Jek
 - **Dark Mode** - Toggle between light and dark themes
 - **Interactive Skills Section** - Click skills to see related projects
 - **Dev Blog** - Jekyll-powered blog for development updates
-- **Services hub** - Public HTTPS apps (Cloudflare) listed as cards from `_data/services.yml`
+- **Services hub** - HTTPS apps listed as cards from `_data/services.yml` (Overseerr, Access-gated Travel)
 - **Electronics Inventory** - Public read-only inventory view (management stays on a private host)
-- **Travel (private)** - Access-gated `/travel` flight status page (not in public nav; mock data until the Worker secret is set)
+- **Travel (private)** - Access-gated `/travel` flight board with add-trip form, upcoming cards, and live status near departure
 
 ## Tech Stack
 
@@ -46,7 +46,7 @@ Projects are easily editable in `js/projects-data.json`:
 
 ## Adding Services
 
-Public service cards are listed in `_data/services.yml`:
+Service cards are listed in `_data/services.yml`. Access-gated HTTPS apps (like Travel) may be listed; Cloudflare Access still blocks the destination.
 
 ```yaml
 - name: App Name
@@ -55,7 +55,7 @@ Public service cards are listed in `_data/services.yml`:
   icon: fa-link
 ```
 
-Only public `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (`100.x`), localhost, or `http` URLs. Hub templates skip those.
+Only `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (`100.x`), localhost, or `http` URLs. Hub templates skip those.
 
 ## Project Structure
 
@@ -68,8 +68,8 @@ Only public `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (
 - `js/projects-data.json` - Project data (easily editable)
 - `_data/services.yml` - Public service hub cards
 - `services.html` - `/services/` hub page
-- `travel/` - Private `/travel` UI (`noindex`, not in public nav)
-- `workers/travel/` - Cloudflare Worker for `GET /api/travel` (secrets + KV; not published by Jekyll)
+- `travel/` - Private `/travel` UI (`noindex`; linked from Services, gated by Cloudflare Access)
+- `workers/travel/` - Cloudflare Worker for `GET /api/travel` plus trip create/delete (secrets + KV; not published by Jekyll)
 
 ## Notes
 
@@ -80,4 +80,4 @@ Only public `https://` hostnames belong here. Do not add Tailscale, LAN, CGNAT (
 
 ## Private travel page
 
-`/travel` is partner-gated and must not appear on the homepage or in public navigation. Locally, `jekyll serve` plus opening `/travel/` renders the arc and status chips against in-page sample data when `/api/travel` is absent.
+`/travel` is partner-gated with Cloudflare Access. It is linked from the Services hub; unauthenticated visitors hit the Access login instead of flight data. Locally, `jekyll serve` plus opening `/travel/` renders sample live + upcoming cards when `/api/travel` is absent. Adding trips requires the Worker and KV.
